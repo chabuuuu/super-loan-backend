@@ -16,6 +16,6 @@
   "helmet": false,
   "enviroment": "development",
   "database": {
-    "sync": true
+    "sync": false
   }
 }
