@@ -35,7 +35,7 @@ app.use(responseFormater);
 /**
  * Routes
  */
-route(app, GlobalConfig.server.api_version);
+route(app);
 
 /**
  * Global error handler
