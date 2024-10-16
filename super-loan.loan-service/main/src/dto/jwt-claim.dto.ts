@@ -1,3 +1,7 @@
+/**
+ * JwtClaimDto
+ *
+ */
 export class JwtClaimDto {
   id!: string;
   username!: string;
