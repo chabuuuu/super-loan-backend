@@ -1,0 +1,81 @@
+version: "3.9"
+
+services:
+  postgres:
+    container_name: postgres_superloan
+    image: postgres:15.7
+    restart: unless-stopped
+    ports:
+      - "5440:5432"
+    env_file:
+      - docker-compose.infrastructure.env
+    volumes:
+      - ./.docker-data/postgres/data:/var/lib/postgresql/data
+    networks:
+      - main-network
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 200M
+
+  minio-service:
+    container_name: minio_superloan
+    image: minio/minio:latest
+    volumes:
+      - ./.docker-data/minio/data:/data
+    ports:
+      - "9000:9000"
+      - "9099:9099"
+    env_file:
+      - docker-compose.infrastructure.env
+    command: server --address ":9099" --console-address ":9000" /data
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 500M
+
+  redis:
+    container_name: redis_superloan
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./.docker-data/redis/data/redis:/data
+    networks:
+      - main-network
+    restart: unless-stopped
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+    volumes:
+      - ./kafka-data:/var/lib/kafka/data
+
+networks:
+  main-network:
+    driver: bridge
+
+volumes:
+  kafka-data:

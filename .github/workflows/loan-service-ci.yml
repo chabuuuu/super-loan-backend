@@ -1,0 +1,50 @@
+name: CI for Loan Service
+
+on:
+  push:
+    branches:
+      - develop
+      - release
+      - main
+    paths:
+      - "super-loan.loan-service/**"
+  pull_request:
+    branches:
+      - develop
+      - release
+      - main
+    paths:
+      - "super-loan.loan-service/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "21.6.2"
+
+      - name: Install dependencies
+        run: |
+          cd ./super-loan.loan-service/main 
+          npm install
+
+      - name: Run tests
+        run: |
+          cd ./super-loan.loan-service/main 
+          npm run test
+
+      - name: Git Guardian Check
+        uses: GitGuardian/ggshield-action@v1
+        with:
+          ggshield_version: latest
+          gitguardian_token: ${{ secrets.GIT_GUARDIAN_TOKEN }}
+
+      - name: Test results
+        if: failure()
+        run: echo "Tests failed, cannot merge!"

@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  backend:
+    container_name: super-loan.payment-service
+    build:
+      context: ./main
+    restart: unless-stopped
+    ports:
+      - "5001:4000"
+    env_file:
+      - .docker.env
+    networks:
+      - main-network
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 200M
+
+networks:
+  main-network:
+    driver: bridge

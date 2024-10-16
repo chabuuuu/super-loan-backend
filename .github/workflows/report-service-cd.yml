@@ -1,0 +1,43 @@
+name: Report service CD
+
+env:
+  SERVICE_FOLDER: /super-loan.report-service
+  DEPLOY_FOLDER: /root/why-soft/super-loan/backend/report-service
+  ENV_FILE_PATH: /root/why-soft/super-loan/env_file/backend/super-loan.report-service/.docker.env
+
+on:
+  push:
+    branches:
+      - release
+    paths:
+      - "super-loan.report-service/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Copy source code to server
+        uses: appleboy/scp-action@v0.1.1
+        with:
+          host: ${{ secrets.SUPER_LOAN_SERVER_HOST }}
+          username: ${{ secrets.SUPER_LOAN_SERVER_USER }}
+          password: ${{ secrets.SUPER_LOAN_SERVER_PASSWORD }}
+          source: "./*"
+          target: ${{ env.DEPLOY_FOLDER }}
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.SUPER_LOAN_SERVER_HOST }}
+          username: ${{ secrets.SUPER_LOAN_SERVER_USER }}
+          password: ${{ secrets.SUPER_LOAN_SERVER_PASSWORD }}
+          port: 22
+          script: |
+            cp ${{ env.ENV_FILE_PATH }} ${{ env.DEPLOY_FOLDER }}${{ env.SERVICE_FOLDER }}
+            cd ${{ env.DEPLOY_FOLDER }}${{ env.SERVICE_FOLDER }}
+            sudo docker compose down       
+            docker compose up --build -d
