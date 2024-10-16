@@ -16,7 +16,7 @@ services:
       resources:
         limits:
           cpus: "0.5"
-          memory: 200M
+          memory: 300M
 
 networks:
   main-network:
