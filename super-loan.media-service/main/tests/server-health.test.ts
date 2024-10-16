@@ -15,7 +15,7 @@ afterAll(async () => {
 
 describe('Test the user routes', () => {
   it('Health should be OK', async () => {
-    const res = await request(app).get('/api/v1/health');
+    const res = await request(app).get('/health');
     console.log('res body', res.body);
 
     expect(res.statusCode).toEqual(200);
