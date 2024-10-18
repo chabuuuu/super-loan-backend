@@ -6,7 +6,7 @@ import { Borrower } from './borrower.model';
 @Entity('payment_slips')
 export class PaymentSlip extends BaseModel {
   @PrimaryGeneratedColumn('uuid', { name: 'payment_slip_id' })
-  paymentSlipID!: string;
+  paymentSlipId!: string;
 
   @ManyToOne(() => DisbursementPlan, { nullable: false })
   @JoinColumn({ name: 'propose_id' })

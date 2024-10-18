@@ -6,11 +6,11 @@ import { PaymentPlan } from './payment_plan.model';
 @Entity('notifications')
 export class Notification extends BaseModel {
   @PrimaryGeneratedColumn('uuid', { name: 'notification_id' })
-  notificationID!: string;
+  notificationId!: string;
 
   @ManyToOne(() => PaymentPlan, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'propose_id' })
-  proposeID!: PaymentPlan;
+  propose!: PaymentPlan;
 
   @Column('json', { name: 'object_receive_notices' })
   objectReceiveNotices!: { receiver_id: number; seen: boolean }[];

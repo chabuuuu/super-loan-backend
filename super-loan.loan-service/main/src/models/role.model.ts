@@ -9,13 +9,17 @@ import { RolePermission } from './role_permission.model';
 @Entity('roles')
 export class Role extends BaseModel {
   @PrimaryGeneratedColumn('uuid', { name: 'role_id' })
-  @OneToMany(() => Employee, (employee) => employee.role)
-  @OneToMany(() => RolePermission, (role_permission) => role_permission.roleID)
-  roleID!: string;
+  roleId!: string;
 
   @Index({ unique: true })
-  @Column('varchar', { length: 30 })
-  name!: string;
+  @Column('varchar', { length: 30, name: 'role_name' })
+  roleName!: string;
+
+  @OneToMany(() => Employee, (employee) => employee.role)
+  employees!: Employee[];
+
+  @OneToMany(() => RolePermission, (role_permission) => role_permission.role)
+  rolePermissions!: RolePermission[];
 
   @OneToMany(() => Account, (account) => account.role)
   accounts!: Account[];

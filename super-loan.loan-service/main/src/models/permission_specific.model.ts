@@ -5,16 +5,12 @@ import { Employee } from './employee.model';
 
 @Entity('permission_specifics')
 export class PermissionSpecific extends BaseModel {
-  @PrimaryColumn('uuid', { name: 'user_id' })
-  userID!: string;
-
-  @PrimaryColumn('uuid', { name: 'permission_id' })
-  permissionID!: string;
-
+  @PrimaryColumn('uuid')
   @ManyToOne(() => Employee, { nullable: false })
   @JoinColumn({ name: 'user_id' })
   user!: Employee;
 
+  @PrimaryColumn('uuid')
   @ManyToOne(() => Permission, { nullable: false })
   @JoinColumn({ name: 'permission_id' })
   permission!: Permission;

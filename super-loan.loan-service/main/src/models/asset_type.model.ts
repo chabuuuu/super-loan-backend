@@ -5,12 +5,14 @@ import { Asset } from './asset.model';
 @Entity('asset_types')
 export class AssetType extends BaseModel {
   @PrimaryGeneratedColumn('uuid', { name: 'asset_type_id' })
-  @OneToMany(() => Asset, (asset) => asset.assetType)
-  assetTypeID!: string;
+  assetTypeId!: string;
 
   @Column('varchar', { length: 255, name: 'asset_type_name' })
   assetTypeName!: string;
 
   @Column('text', { nullable: true, name: 'description' })
   description!: string;
+
+  @OneToMany(() => Asset, (asset) => asset.assetType)
+  assets!: Asset[];
 }

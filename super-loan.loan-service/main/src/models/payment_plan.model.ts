@@ -7,9 +7,7 @@ import { Notification } from './notification.model';
 @Entity('payment_plans')
 export class PaymentPlan extends BaseModel {
   @PrimaryGeneratedColumn('uuid', { name: 'propose_id' })
-  @OneToMany(() => Receipt, (receipt) => receipt.propose)
-  @OneToMany(() => Notification, (notification) => notification.proposeID)
-  proposeID!: string;
+  proposeId!: string;
 
   @Column('int', { name: 'payment_installment' })
   paymentInstallment!: number;
@@ -32,4 +30,10 @@ export class PaymentPlan extends BaseModel {
 
   @Column('int', { name: 'days' })
   days!: number;
+
+  @OneToMany(() => Receipt, (receipt) => receipt.propose)
+  receipts!: Receipt[];
+
+  @OneToMany(() => Notification, (notification) => notification.propose)
+  notifications!: Notification[];
 }

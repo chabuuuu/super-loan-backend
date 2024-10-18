@@ -6,10 +6,10 @@ import { Permission } from './permission.model';
 @Entity('role_permissions')
 export class RolePermission extends BaseModel {
   @PrimaryColumn('uuid', { name: 'role_id' })
-  roleID!: string;
+  roleId!: string;
 
   @PrimaryColumn('uuid', { name: 'permission_id' })
-  permissionID!: string;
+  permissionId!: string;
 
   @ManyToOne(() => Role, { nullable: false })
   @JoinColumn({ name: 'role_id' })

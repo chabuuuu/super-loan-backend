@@ -1,15 +1,15 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseModel } from './base.model';
 import { Employee } from './employee.model';
 
 @Entity('employee_profiles')
 export class EmployeeProfile extends BaseModel {
   @PrimaryColumn('uuid')
-  @ManyToOne(() => Employee, { onDelete: 'CASCADE' })
+  @OneToOne(() => Employee, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'employee_id' })
-  employee!: Employee;
+  employeeId!: Employee;
 
-  @Column('varchar', { length: 20 })
+  @Column({ type: 'text', length: 255 })
   avatar!: string;
 
   @Index({ unique: true })
@@ -23,11 +23,11 @@ export class EmployeeProfile extends BaseModel {
   @Column('varchar', { length: 255 })
   fullname!: string;
 
-  @Column('varchar', { length: 20 })
-  identify_card_number!: string;
+  @Column('varchar', { length: 20, name: 'identify_card_number' })
+  identifyCardNumber!: string;
 
-  @Column('varchar', { length: 255 })
-  home_address!: string;
+  @Column('varchar', { length: 255, name: 'home_address' })
+  homeAddress!: string;
 
   @Column('date')
   birthday!: Date;
@@ -35,9 +35,9 @@ export class EmployeeProfile extends BaseModel {
   @Column('varchar', { length: 10 })
   gender!: string;
 
-  @Column('varchar', { length: 255 })
-  social_link!: string;
+  @Column('varchar', { length: 255, name: 'social_link' })
+  socialLink!: string;
 
-  @Column('varchar', { length: 255 })
-  sign_attachments!: string;
+  @Column('varchar', { length: 255, name: 'sign_attachments' })
+  signAttachments!: string;
 }

@@ -6,9 +6,7 @@ import { Contract } from './contract.model';
 @Entity('lenders')
 export class Lender extends BaseModel {
   @PrimaryGeneratedColumn('uuid', { name: 'lender_id' })
-  @OneToMany(() => LenderProfile, (lender_profile) => lender_profile.lender)
-  @OneToMany(() => Contract, (contract) => contract.lender)
-  lenderID!: string;
+  lenderId!: string;
 
   @Column('varchar', { length: 255, name: 'email' })
   email!: string;
@@ -27,4 +25,10 @@ export class Lender extends BaseModel {
 
   @Column('varchar', { length: 50, name: 'status' })
   status!: 'Active' | 'Blocked';
+
+  @OneToMany(() => LenderProfile, (lenderProfile) => lenderProfile.lender)
+  lenderProfiles!: LenderProfile[];
+
+  @OneToMany(() => Contract, (contract) => contract.lender)
+  contracts!: Contract[];
 }

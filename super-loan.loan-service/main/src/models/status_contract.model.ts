@@ -7,7 +7,7 @@ import { Contract } from './contract.model';
 export class StatusContract extends BaseModel {
   @PrimaryColumn('uuid', { name: 'tracking_object_id' })
   @ManyToOne(() => Contract)
-  trackingObjectID!: Contract;
+  trackingObjectId!: Contract;
 
   @PrimaryColumn('varchar', { length: 50, name: 'status' })
   status!: string;

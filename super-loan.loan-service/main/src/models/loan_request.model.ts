@@ -10,14 +10,7 @@ import { TrackingContractInformation } from './tracking_contract_information.mod
 @Entity('loan_requests')
 export class LoanRequest extends BaseModel {
   @PrimaryGeneratedColumn('uuid', { name: 'loan_request_id' })
-  @OneToMany(() => LoanRequestAssetDetail, (loan_request_asset_detail) => loan_request_asset_detail.loanRequest)
-  @OneToMany(() => Appraisal, (appraisal) => appraisal.loanRequest)
-  @OneToMany(() => Contract, (contract) => contract.loanRequest)
-  @OneToMany(
-    () => TrackingContractInformation,
-    (tracking_contract_information) => tracking_contract_information.loanRequest
-  )
-  loanRequestID!: string;
+  loanRequestId!: string;
 
   @ManyToOne(() => Borrower, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'borrower_id' })
@@ -47,8 +40,8 @@ export class LoanRequest extends BaseModel {
   @Column('decimal', { precision: 15, scale: 2, name: 'borrower_income' })
   borrowerIncome!: number;
 
-  @Column('text', { nullable: true, name: 'borrower_income_proff_documents' })
-  borrowerIncomeProffDocuments!: string;
+  @Column('text', { nullable: true, name: 'borrower_income_proof_documents' })
+  borrowerIncomeProofDocuments!: string;
 
   @ManyToOne(() => LoanPackage)
   @JoinColumn({ name: 'loan_package_id' })
@@ -77,4 +70,19 @@ export class LoanRequest extends BaseModel {
 
   @Column('text', { name: 'loan_request_form', nullable: true })
   loanRequestForm!: string;
+
+  @OneToMany(() => LoanRequestAssetDetail, (loan_request_asset_detail) => loan_request_asset_detail.loanRequest)
+  loanRequestAssetDetails!: LoanRequestAssetDetail[];
+
+  @OneToMany(() => Appraisal, (appraisal) => appraisal.loanRequest)
+  appraisals!: Appraisal[];
+
+  @OneToMany(() => Contract, (contract) => contract.loanRequest)
+  contracts!: Contract[];
+
+  @OneToMany(
+    () => TrackingContractInformation,
+    (tracking_contract_information) => tracking_contract_information.loanRequest
+  )
+  trackingContractInformations!: TrackingContractInformation[];
 }

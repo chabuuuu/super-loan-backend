@@ -6,8 +6,7 @@ import { PaymentSlip } from './payment_slip.model';
 @Entity('disbursement_plans')
 export class DisbursementPlan extends BaseModel {
   @PrimaryGeneratedColumn('uuid', { name: 'propose_id' })
-  @OneToMany(() => PaymentSlip, (payment_slip) => payment_slip.propose)
-  proposeID!: string;
+  proposeId!: string;
 
   @Column('int', { name: 'disbursement_installment' })
   disbursementInstallment!: number;
@@ -24,4 +23,7 @@ export class DisbursementPlan extends BaseModel {
 
   @Column('date', { name: 'disburse_at' })
   disburseAt!: Date;
+
+  @OneToMany(() => PaymentSlip, (payment_slip) => payment_slip.propose)
+  paymentSlips!: PaymentSlip[];
 }

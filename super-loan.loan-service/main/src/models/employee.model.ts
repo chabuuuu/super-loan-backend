@@ -1,4 +1,4 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseModel } from './base.model';
 import { Role } from './role.model';
 import { EmployeeProfile } from './employee_profile.model';
@@ -9,12 +9,8 @@ import { PermissionSpecific } from './permission_specific.model';
 @Entity('employees')
 export class Employee extends BaseModel {
   @PrimaryGeneratedColumn('uuid')
-  @OneToMany(() => EmployeeProfile, (employee_profile) => employee_profile.employee)
-  @OneToMany(() => Appraisal, (appraisal) => appraisal.appraisalStaff)
-  @OneToMany(() => StatusContract, (status_contract) => status_contract.employeeChange)
-  @OneToMany(() => PermissionSpecific, (permission_specific) => permission_specific.user)
   @Column({ name: 'employee_id' })
-  employeeID!: string;
+  employeeId!: string;
 
   @Index({ unique: true })
   @Column('varchar', { length: 30 })
@@ -28,8 +24,21 @@ export class Employee extends BaseModel {
   password!: string;
 
   @ManyToOne(() => Role, { onDelete: 'CASCADE' })
-  @JoinColumn({})
+  @JoinColumn()
   role!: Role;
+
+  @OneToOne(() => EmployeeProfile, (employee_profile) => employee_profile.employeeId)
+  @JoinColumn()
+  employeeProfile!: EmployeeProfile;
+
+  @OneToMany(() => Appraisal, (appraisal) => appraisal.appraisalStaff)
+  appraisals!: Appraisal[];
+
+  @OneToMany(() => StatusContract, (status_contract) => status_contract.employeeChange)
+  statusContracts!: StatusContract[];
+
+  @OneToMany(() => PermissionSpecific, (permission_specific) => permission_specific.user)
+  permissionSpecifics!: PermissionSpecific[];
 
   @Column('varchar', { length: 30 })
   status!: string;

@@ -7,8 +7,10 @@ import { AppraisalDetail } from './appraisal_detail.model';
 @Entity('appraisals')
 export class Appraisal extends BaseModel {
   @PrimaryGeneratedColumn('uuid', { name: 'appraisal_id' })
-  @OneToMany(() => AppraisalDetail, (appraisal_detail) => appraisal_detail.appraisal)
   appraisalID!: string;
+
+  @OneToMany(() => AppraisalDetail, (appraisal_detail) => appraisal_detail.appraisal)
+  appraisalDetails!: AppraisalDetail[];
 
   @ManyToOne(() => LoanRequest)
   @JoinColumn({ name: 'loan_request_id' })

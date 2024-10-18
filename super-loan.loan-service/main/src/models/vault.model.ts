@@ -4,7 +4,7 @@ import { BaseModel } from './base.model';
 @Entity('vaults')
 export class Vault extends BaseModel {
   @PrimaryGeneratedColumn('uuid', { name: 'vault_id' })
-  vaultID!: string;
+  vaultId!: string;
 
   @Column('varchar', { length: 255, name: 'vault_name' })
   vaultName!: string;

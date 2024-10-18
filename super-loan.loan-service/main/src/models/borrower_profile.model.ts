@@ -1,13 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany, Index } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToMany, Index, OneToOne } from 'typeorm';
 import { Borrower } from './borrower.model';
 import { BaseModel } from './base.model';
 
 @Entity('borrower_profiles')
 export class BorrowerProfile extends BaseModel {
   @PrimaryGeneratedColumn('uuid')
-  @ManyToOne(() => Borrower, { onDelete: 'CASCADE' })
+  @OneToOne(() => Borrower, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'borrower_id' })
-  borrower!: Borrower;
+  borrowerId!: Borrower;
 
   @Column('varchar', { length: 255 })
   fullname!: string;

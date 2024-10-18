@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { BaseModel } from './base.model';
 import { VersionLoanPackage } from './version_loan_package.model';
 import { LoanRequest } from './loan_request.model';
@@ -8,15 +8,8 @@ import { TrackingContractInformation } from './tracking_contract_information.mod
 @Entity('loan_packages')
 export class LoanPackage extends BaseModel {
   @PrimaryGeneratedColumn('uuid')
-  @OneToMany(() => VersionLoanPackage, (version_loan_package) => version_loan_package.loanPackage)
-  @OneToMany(() => LoanRequest, (loan_request) => loan_request.loanPackage)
-  @OneToMany(() => Contract, (contract) => contract.loanPackage)
-  @OneToMany(
-    () => TrackingContractInformation,
-    (tracking_contract_information) => tracking_contract_information.loanPackageID
-  )
   @Column({ name: 'loan_package_id' })
-  loanPackageID!: string;
+  loanPackageId!: string;
 
   @Column('varchar', { length: 255, name: 'loan_package_name' })
   loanPackageName!: string;
@@ -41,4 +34,19 @@ export class LoanPackage extends BaseModel {
 
   @Column('text', { nullable: true })
   description!: string;
+
+  @OneToMany(() => VersionLoanPackage, (version_loan_package) => version_loan_package.loanPackage)
+  versionLoanPackages!: VersionLoanPackage[];
+
+  @OneToMany(() => LoanRequest, (loan_request) => loan_request.loanPackage)
+  loanRequests!: LoanRequest[];
+
+  @OneToMany(() => Contract, (contract) => contract.loanPackage)
+  contracts!: Contract[];
+
+  @OneToMany(
+    () => TrackingContractInformation,
+    (tracking_contract_information) => tracking_contract_information.loanPackageId
+  )
+  trackingContractInformations!: TrackingContractInformation[];
 }

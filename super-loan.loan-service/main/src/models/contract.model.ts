@@ -13,15 +13,7 @@ import { PaymentInstallment } from './payment_installment.model';
 @Entity('contracts')
 export class Contract extends BaseModel {
   @PrimaryGeneratedColumn('uuid', { name: 'contract_id' })
-  @OneToMany(() => StatusContract, (status_contract) => status_contract.trackingObjectID)
-  @OneToMany(
-    () => TrackingContractInformation,
-    (tracking_contract_information) => tracking_contract_information.contractID
-  )
-  @OneToMany(() => PaymentPlan, (payment_plan) => payment_plan.contract)
-  @OneToMany(() => DisbursementPlan, (disbursement_plan) => disbursement_plan.contract)
-  @OneToMany(() => PaymentInstallment, (payment_installment) => payment_installment.contract)
-  contractID!: string;
+  contractId!: string;
 
   @ManyToOne(() => LoanRequest, { nullable: false })
   @JoinColumn({ name: 'loan_request_id' })
@@ -113,4 +105,22 @@ export class Contract extends BaseModel {
 
   @Column('text', { nullable: true, name: 'hard_contract_document' })
   hardContractDocument!: string | null;
+
+  @OneToMany(() => StatusContract, (status_contract) => status_contract.trackingObjectId)
+  statusContracts!: StatusContract[];
+
+  @OneToMany(
+    () => TrackingContractInformation,
+    (tracking_contract_information) => tracking_contract_information.contractId
+  )
+  trackingContractInformations!: TrackingContractInformation[];
+
+  @OneToMany(() => PaymentPlan, (payment_plan) => payment_plan.contract)
+  paymentPlans!: PaymentPlan[];
+
+  @OneToMany(() => DisbursementPlan, (disbursement_plan) => disbursement_plan.contract)
+  disbursementPlans!: DisbursementPlan[];
+
+  @OneToMany(() => PaymentInstallment, (payment_installment) => payment_installment.contract)
+  paymentInstallments!: PaymentInstallment[];
 }

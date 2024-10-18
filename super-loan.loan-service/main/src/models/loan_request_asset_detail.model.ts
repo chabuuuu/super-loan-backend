@@ -6,7 +6,7 @@ import { Asset } from './asset.model';
 @Entity('loan_request_asset_details')
 export class LoanRequestAssetDetail extends BaseModel {
   @PrimaryGeneratedColumn('uuid', { name: 'loan_request_asset_detail_id' })
-  loanRequestAssetDetailID!: string;
+  loanRequestAssetDetailId!: string;
 
   @ManyToOne(() => LoanRequest)
   @JoinColumn({ name: 'loan_request_id' })

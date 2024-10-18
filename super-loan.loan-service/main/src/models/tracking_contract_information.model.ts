@@ -9,7 +9,7 @@ import { LoanPackage } from './loan_package.model';
 export class TrackingContractInformation extends BaseModel {
   @PrimaryGeneratedColumn('uuid', { name: 'contract_id' })
   @ManyToOne(() => Contract)
-  contractID!: string;
+  contractId!: string;
 
   @ManyToOne(() => LoanRequest)
   @JoinColumn({ name: 'loan_request_id' })
@@ -78,7 +78,7 @@ export class TrackingContractInformation extends BaseModel {
 
   @ManyToOne(() => LoanPackage)
   @Column('uuid', { name: 'loan_package_id' })
-  loanPackageID!: LoanPackage;
+  loanPackageId!: LoanPackage;
 
   @Column('varchar', { length: 255, name: 'loan_package_name' })
   loanPackageName!: string;
