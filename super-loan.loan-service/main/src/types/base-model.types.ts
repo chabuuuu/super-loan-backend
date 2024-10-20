@@ -1,8 +1,8 @@
 export type BaseModelType = {
   id?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  createdBy?: string;
-  updatedBy?: string;
-  deletedAt?: Date;
+  createAt?: Date;
+  updateAt?: Date;
+  createBy?: string;
+  updateBy?: string;
+  deleteAt?: Date;
 };
