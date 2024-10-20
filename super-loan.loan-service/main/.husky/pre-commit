@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-cd ./main
+cd ./super-loan.loan-service/main
 npm run lint
 npm run prettier
+npm run test
