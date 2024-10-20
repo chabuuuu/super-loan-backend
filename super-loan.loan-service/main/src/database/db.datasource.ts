@@ -1,5 +1,4 @@
 import 'dotenv/config';
-import { Account } from '../models/account.model';
 import { Role } from '../models/role.model';
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
@@ -9,13 +8,12 @@ export class AppDataSourceSingleton {
   private static instance: DataSource;
 
   private constructor() {}
-
   public static getInstance(): DataSource {
     if (!AppDataSourceSingleton.instance) {
       AppDataSourceSingleton.instance = new DataSource({
         type: 'postgres',
         url: process.env.DATABASE_URL || 'postgres://username:password@host:port/database',
-        entities: [Account, Role],
+        entities: ['dist/models/*.js'],
         synchronize: GlobalConfig.database.sync,
         logging: true,
         migrations: [__dirname + '/migrations/*.js']
