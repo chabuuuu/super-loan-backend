@@ -1,4 +1,4 @@
 import { IBaseCrudService } from '@/service/interface/i.base.service';
 import { BaseModelType } from '@/types/base-model.types';
 
-export interface IRoleService<T extends BaseModelType> extends IBaseCrudService<T> {}
+export interface ILoanRequestService<T extends BaseModelType> extends IBaseCrudService<T> {}
