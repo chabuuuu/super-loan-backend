@@ -5,9 +5,9 @@ import { Contract } from './contract.model';
 
 @Entity('status_contracts')
 export class StatusContract extends BaseModel {
-  @PrimaryColumn('uuid', { name: 'tracking_object_id' })
-  @ManyToOne(() => Contract)
-  trackingObjectId!: Contract;
+  @PrimaryColumn({ name: 'tracking_object_id' })
+  // @ManyToOne(() => Contract)
+  trackingObjectId!: string;
 
   @PrimaryColumn('varchar', { length: 50, name: 'status' })
   status!: string;

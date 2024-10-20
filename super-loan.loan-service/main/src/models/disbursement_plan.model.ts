@@ -24,6 +24,6 @@ export class DisbursementPlan extends BaseModel {
   @Column('date', { name: 'disburse_at' })
   disburseAt!: Date;
 
-  @OneToMany(() => PaymentSlip, (payment_slip) => payment_slip.propose)
-  paymentSlips!: PaymentSlip[];
+  // @OneToMany(() => PaymentSlip, (payment_slip) => payment_slip.propose)
+  // paymentSlips!: PaymentSlip[];
 }

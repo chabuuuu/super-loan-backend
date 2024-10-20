@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, OneToOne } from 'typeorm';
 import { BaseModel } from './base.model';
 import { LenderProfile } from './lender_profile.model';
 import { Contract } from './contract.model';
@@ -18,17 +18,17 @@ export class Lender extends BaseModel {
   password!: string;
 
   @Column('varchar', { length: 50, nullable: true, name: 'social_login_type' })
-  socialLoginType!: 'None' | 'Facebook' | 'Google' | null;
+  socialLoginType?: string;
 
   @Column('varchar', { length: 255, nullable: true, name: 'social_uid' })
-  socialUID!: string | null;
+  socialUid!: string | null;
 
   @Column('varchar', { length: 50, name: 'status' })
-  status!: 'Active' | 'Blocked';
+  status!: string;
 
-  @OneToMany(() => LenderProfile, (lenderProfile) => lenderProfile.lender)
-  lenderProfiles!: LenderProfile[];
+  @OneToOne(() => LenderProfile, (lenderProfile) => lenderProfile.lender)
+  lenderProfiles!: LenderProfile;
 
   @OneToMany(() => Contract, (contract) => contract.lender)
-  contracts!: Contract[];
+  contracts!: Promise<Contract[]>;
 }

@@ -8,8 +8,7 @@ import { PermissionSpecific } from './permission_specific.model';
 
 @Entity('employees')
 export class Employee extends BaseModel {
-  @PrimaryGeneratedColumn('uuid')
-  @Column({ name: 'employee_id' })
+  @PrimaryGeneratedColumn('uuid', { name: 'employee_id' })
   employeeId!: string;
 
   @Index({ unique: true })
@@ -20,7 +19,7 @@ export class Employee extends BaseModel {
   @Column('varchar', { length: 15, name: 'phone_number' })
   phoneNumber!: string;
 
-  @Column('varchar', { length: 20 })
+  @Column('varchar', { length: 100 })
   password!: string;
 
   @ManyToOne(() => Role, { onDelete: 'CASCADE' })
@@ -28,17 +27,13 @@ export class Employee extends BaseModel {
   role!: Role;
 
   @OneToOne(() => EmployeeProfile, (employee_profile) => employee_profile.employeeId)
-  @JoinColumn()
   employeeProfile!: EmployeeProfile;
 
   @OneToMany(() => Appraisal, (appraisal) => appraisal.appraisalStaff)
-  appraisals!: Appraisal[];
-
-  @OneToMany(() => StatusContract, (status_contract) => status_contract.employeeChange)
-  statusContracts!: StatusContract[];
+  appraisals!: Promise<Appraisal[]>;
 
   @OneToMany(() => PermissionSpecific, (permission_specific) => permission_specific.user)
-  permissionSpecifics!: PermissionSpecific[];
+  permissionSpecifics!: Promise<PermissionSpecific[]>;
 
   @Column('varchar', { length: 30 })
   status!: string;

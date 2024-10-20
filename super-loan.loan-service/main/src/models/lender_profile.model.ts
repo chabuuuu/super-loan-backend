@@ -1,11 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne, PrimaryColumn, OneToOne } from 'typeorm';
 import { BaseModel } from './base.model';
 import { Lender } from './lender.model';
 
 @Entity('lender_profiles')
 export class LenderProfile extends BaseModel {
-  @PrimaryGeneratedColumn('uuid', { name: 'lender_id' })
-  @ManyToOne(() => Lender)
+  @PrimaryColumn({ name: 'lender_id' })
+  lenderId!: string;
+
+  @OneToOne(() => Lender, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'lender_id' })
   lender!: Lender;
 
@@ -18,10 +20,10 @@ export class LenderProfile extends BaseModel {
   @Column('varchar', { length: 100, nullable: true, name: 'job_title' })
   jobTitle!: string | null;
 
-  @Column('text', { nullable: true, name: 'emails' })
+  @Column('simple-array', { nullable: true, name: 'emails' })
   emails!: string[] | null;
 
-  @Column('text', { nullable: true, name: 'phone_numbers' })
+  @Column('simple-array', { nullable: true, name: 'phone_numbers' })
   phoneNumbers!: string[] | null;
 
   @Column('varchar', { length: 255, nullable: true, name: 'company_name' })
@@ -42,6 +44,6 @@ export class LenderProfile extends BaseModel {
   @Column('varchar', { length: 255, nullable: true, name: 'social_link' })
   socialLink!: string | null;
 
-  @Column('varchar', { length: 255, nullable: true, name: 'sign' })
+  @Column('text', { nullable: true, name: 'sign' })
   sign!: string | null;
 }

@@ -8,9 +8,8 @@ export class Receipt extends BaseModel {
   @PrimaryGeneratedColumn('uuid', { name: 'receipt_id' })
   receiptId!: string;
 
-  @ManyToOne(() => PaymentPlan, { nullable: false })
-  @JoinColumn({ name: 'propose_id' })
-  propose!: PaymentPlan;
+  @Column({ name: 'propose_id' })
+  proposeId!: string;
 
   @Column('varchar', { length: 50, name: 'propose_type' })
   proposeType!: string;
@@ -33,13 +32,15 @@ export class Receipt extends BaseModel {
   @Column('varchar', { length: 255, nullable: true, name: 'pay_address' })
   payAddress!: string | null;
 
-  @ManyToOne(() => Borrower, { nullable: false })
-  @JoinColumn({ name: 'object_receipt' })
-  objectReceipt!: Borrower;
+  @Column({ name: 'object_receipt_id' })
+  objectReceiptId!: string;
+
+  @Column({ name: 'object_type' })
+  objectType!: string;
 
   @Column('date', { name: 'receipt_date' })
   receiptDate!: Date;
 
-  @Column('text', { nullable: true, name: 'attachments' })
-  attachments!: string | null;
+  @Column('simple-array', { nullable: true, name: 'attachments' })
+  attachments!: string[] | null;
 }

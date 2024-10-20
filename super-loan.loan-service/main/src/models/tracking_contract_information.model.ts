@@ -11,16 +11,11 @@ export class TrackingContractInformation extends BaseModel {
   @ManyToOne(() => Contract)
   contractId!: string;
 
-  @ManyToOne(() => LoanRequest)
-  @JoinColumn({ name: 'loan_request_id' })
-  loanRequest!: LoanRequest;
+  @Column({ name: 'loan_request_id' })
+  loanRequestId!: string;
 
   @Column('varchar', { length: 50, name: 'contract_status' })
   contractStatus!: string;
-
-  @ManyToOne(() => Borrower)
-  @Column('uuid', { name: 'customer_id' })
-  customerID!: Borrower;
 
   @Column('varchar', { length: 255, name: 'borrower_fullname' })
   borrowerFullname!: string;
@@ -76,9 +71,8 @@ export class TrackingContractInformation extends BaseModel {
   @Column('varchar', { length: 50, name: 'loan_type' })
   loanType!: string;
 
-  @ManyToOne(() => LoanPackage)
-  @Column('uuid', { name: 'loan_package_id' })
-  loanPackageId!: LoanPackage;
+  @Column({ name: 'loan_package_id' })
+  loanPackageId!: string;
 
   @Column('varchar', { length: 255, name: 'loan_package_name' })
   loanPackageName!: string;

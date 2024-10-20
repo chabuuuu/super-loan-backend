@@ -7,8 +7,7 @@ import { TrackingContractInformation } from './tracking_contract_information.mod
 
 @Entity('loan_packages')
 export class LoanPackage extends BaseModel {
-  @PrimaryGeneratedColumn('uuid')
-  @Column({ name: 'loan_package_id' })
+  @PrimaryGeneratedColumn('uuid', { name: 'loan_package_id' })
   loanPackageId!: string;
 
   @Column('varchar', { length: 255, name: 'loan_package_name' })
@@ -36,17 +35,17 @@ export class LoanPackage extends BaseModel {
   description!: string;
 
   @OneToMany(() => VersionLoanPackage, (version_loan_package) => version_loan_package.loanPackage)
-  versionLoanPackages!: VersionLoanPackage[];
+  versionLoanPackages!: Promise<VersionLoanPackage[]>;
 
   @OneToMany(() => LoanRequest, (loan_request) => loan_request.loanPackage)
-  loanRequests!: LoanRequest[];
+  loanRequests!: Promise<LoanRequest[]>;
 
   @OneToMany(() => Contract, (contract) => contract.loanPackage)
-  contracts!: Contract[];
+  contracts!: Promise<Contract[]>;
 
-  @OneToMany(
-    () => TrackingContractInformation,
-    (tracking_contract_information) => tracking_contract_information.loanPackageId
-  )
-  trackingContractInformations!: TrackingContractInformation[];
+  // @OneToMany(
+  //   () => TrackingContractInformation,
+  //   (tracking_contract_information) => tracking_contract_information.loanPackageId
+  // )
+  // trackingContractInformations!: Promise<TrackingContractInformation[]>;
 }

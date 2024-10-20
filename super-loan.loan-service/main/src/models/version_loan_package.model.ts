@@ -4,7 +4,9 @@ import { BaseModel } from './base.model';
 
 @Entity('version_loan_packages')
 export class VersionLoanPackage extends BaseModel {
-  @PrimaryColumn('uuid')
+  @PrimaryColumn({ name: 'loan_package_id' })
+  loanPackageId!: string;
+
   @ManyToOne(() => LoanPackage, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'loan_package_id' })
   loanPackage!: LoanPackage;

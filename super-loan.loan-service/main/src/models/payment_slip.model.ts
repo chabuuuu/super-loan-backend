@@ -8,9 +8,8 @@ export class PaymentSlip extends BaseModel {
   @PrimaryGeneratedColumn('uuid', { name: 'payment_slip_id' })
   paymentSlipId!: string;
 
-  @ManyToOne(() => DisbursementPlan, { nullable: false })
-  @JoinColumn({ name: 'propose_id' })
-  propose!: DisbursementPlan;
+  @Column({ name: 'propose_id' })
+  proposeId!: string;
 
   @Column('varchar', { length: 50, name: 'propose_type' })
   proposeType!: string;
@@ -33,9 +32,11 @@ export class PaymentSlip extends BaseModel {
   @Column('varchar', { length: 255, nullable: true, name: 'pay_address' })
   payAddress!: string | null;
 
-  @ManyToOne(() => Borrower, { nullable: false })
-  @JoinColumn({ name: 'object_slip' })
-  objectSlip!: Borrower;
+  @Column({ name: 'object_slip' })
+  objectSlip!: string;
+
+  @Column({ name: 'object_type' })
+  objectType!: string;
 
   @Column('date', { name: 'date_slip' })
   dateSlip!: Date;

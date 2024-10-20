@@ -1,23 +1,22 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseModel } from './base.model';
 import { Borrower } from './borrower.model';
-import { PaymentPlan } from './payment_plan.model';
+import { Employee } from '@/models/employee.model';
 
 @Entity('notifications')
 export class Notification extends BaseModel {
   @PrimaryGeneratedColumn('uuid', { name: 'notification_id' })
   notificationId!: string;
 
-  @ManyToOne(() => PaymentPlan, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'propose_id' })
-  propose!: PaymentPlan;
+  @Column({ name: 'propose_id' })
+  proposeId!: string;
 
   @Column('json', { name: 'object_receive_notices' })
-  objectReceiveNotices!: { receiver_id: number; seen: boolean }[];
+  objectReceiveNotices!: { receiver_id: number; seen: boolean; receiver_type: string }[];
 
-  @ManyToOne(() => Borrower, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Employee, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'subject_send_notice' })
-  subjectSendNotice!: Borrower;
+  subjectSendNotice!: Employee;
 
   @Column('varchar', { length: 255, name: 'title_name' })
   titleName!: string;

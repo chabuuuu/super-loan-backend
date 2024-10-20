@@ -31,9 +31,9 @@ export class PaymentPlan extends BaseModel {
   @Column('int', { name: 'days' })
   days!: number;
 
-  @OneToMany(() => Receipt, (receipt) => receipt.propose)
-  receipts!: Receipt[];
+  // @OneToMany(() => Receipt, (receipt) => receipt.propose)
+  // receipts!: Receipt[];
 
-  @OneToMany(() => Notification, (notification) => notification.propose)
-  notifications!: Notification[];
+  // @OneToMany(() => Notification, (notification) => notification.propose)
+  // notifications!: Notification[];
 }

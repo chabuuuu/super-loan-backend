@@ -75,8 +75,8 @@ export class Contract extends BaseModel {
   @Column('varchar', { length: 255, nullable: true, name: 'receive_money_address' })
   receiveMoneyAddress!: string | null;
 
-  @Column('text', { nullable: true, name: 'attachments' })
-  attachments!: string | null;
+  @Column('simple-array', { nullable: true, name: 'attachments' })
+  attachments?: string[];
 
   @Column('decimal', { precision: 15, scale: 2, name: 'loan_amount' })
   loanAmount!: number;
@@ -106,8 +106,8 @@ export class Contract extends BaseModel {
   @Column('text', { nullable: true, name: 'hard_contract_document' })
   hardContractDocument!: string | null;
 
-  @OneToMany(() => StatusContract, (status_contract) => status_contract.trackingObjectId)
-  statusContracts!: StatusContract[];
+  // @OneToMany(() => StatusContract, (status_contract) => status_contract.trackingObjectId)
+  // statusContracts!: Promise<StatusContract[]>;
 
   @OneToMany(
     () => TrackingContractInformation,

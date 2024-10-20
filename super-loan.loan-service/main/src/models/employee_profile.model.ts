@@ -4,26 +4,26 @@ import { Employee } from './employee.model';
 
 @Entity('employee_profiles')
 export class EmployeeProfile extends BaseModel {
-  @PrimaryColumn('uuid')
+  @PrimaryColumn({ name: 'employee_id' })
+  employeeId!: string;
+
   @OneToOne(() => Employee, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'employee_id' })
-  employeeId!: Employee;
+  employee!: Employee;
 
-  @Column({ type: 'text', length: 255 })
+  @Column({ type: 'text' })
   avatar!: string;
 
-  @Index({ unique: true })
   @Column('simple-array')
   emails!: string[];
 
-  @Index({ unique: true })
   @Column('simple-array', { name: 'phone_numbers' })
   phoneNumbers!: string[];
 
-  @Column('varchar', { length: 255 })
+  @Column('varchar', { length: 100 })
   fullname!: string;
 
-  @Column('varchar', { length: 20, name: 'identify_card_number' })
+  @Column('varchar', { length: 50, name: 'identify_card_number' })
   identifyCardNumber!: string;
 
   @Column('varchar', { length: 255, name: 'home_address' })
@@ -38,6 +38,6 @@ export class EmployeeProfile extends BaseModel {
   @Column('varchar', { length: 255, name: 'social_link' })
   socialLink!: string;
 
-  @Column('varchar', { length: 255, name: 'sign_attachments' })
-  signAttachments!: string;
+  @Column('simple-array', { name: 'sign_attachments' })
+  signAttachments!: string[];
 }

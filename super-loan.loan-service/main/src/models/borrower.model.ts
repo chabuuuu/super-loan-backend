@@ -11,9 +11,8 @@ import { Notification } from './notification.model';
 
 @Entity('borrowers')
 export class Borrower extends BaseModel {
-  @PrimaryGeneratedColumn('uuid')
-  @Column({ name: 'borrower_id' })
-  borrowerID!: string;
+  @PrimaryGeneratedColumn('uuid', { name: 'borrower_id' })
+  borrowerId!: string;
 
   @Index({ unique: true })
   @Column('varchar', { length: 100 })
@@ -23,7 +22,7 @@ export class Borrower extends BaseModel {
   @Column('varchar', { length: 15, name: 'phone_number' })
   phoneNumber!: string;
 
-  @Column('varchar', { length: 20 })
+  @Column('varchar', { length: 100 })
   password!: string;
 
   @Column('varchar', { length: 20, name: 'social_login_type' })
@@ -35,29 +34,29 @@ export class Borrower extends BaseModel {
   @Column('varchar', { length: 20 })
   status!: string;
 
-  @OneToOne(() => BorrowerProfile, (borrower_profile) => borrower_profile.borrowerId)
-  borrowerProfiles!: BorrowerProfile[];
+  @OneToOne(() => BorrowerProfile, (borrower_profile) => borrower_profile.borrower)
+  borrowerProfiles!: BorrowerProfile;
 
   @OneToMany(() => LoanRequest, (loan_request) => loan_request.borrower)
-  loanRequests!: LoanRequest[];
+  loanRequests!: Promise<LoanRequest[]>;
 
   @OneToMany(() => Contract, (contract) => contract.borrower)
-  contracts!: Contract[];
+  contracts!: Promise<Contract[]>;
 
   @OneToMany(() => PaymentInstallment, (payment_installment) => payment_installment.customer)
-  paymentInstallments!: PaymentInstallment[];
+  paymentInstallments!: Promise<PaymentInstallment[]>;
 
-  @OneToMany(
-    () => TrackingContractInformation,
-    (tracking_contract_information) => tracking_contract_information.customerID
-  )
-  trackingContractInformations!: TrackingContractInformation[];
+  // @OneToMany(
+  //   () => TrackingContractInformation,
+  //   (tracking_contract_information) => tracking_contract_information.customerID
+  // )
+  // trackingContractInformations!: TrackingContractInformation[];
 
-  @OneToMany(() => Receipt, (receipt) => receipt.objectReceipt)
-  receipts!: Receipt[];
+  // @OneToMany(() => Receipt, (receipt) => receipt.objectReceipt)
+  // receipts!: Receipt[];
 
-  @OneToMany(() => PaymentSlip, (payment_slip) => payment_slip.objectSlip)
-  paymentSlips!: PaymentSlip[];
+  // @OneToMany(() => PaymentSlip, (payment_slip) => payment_slip.objectSlip)
+  // paymentSlips!: PaymentSlip[];
 
   @OneToMany(() => Notification, (notification) => notification.subjectSendNotice)
   notifications!: Notification[];

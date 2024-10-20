@@ -14,5 +14,5 @@ export class AssetType extends BaseModel {
   description!: string;
 
   @OneToMany(() => Asset, (asset) => asset.assetType)
-  assets!: Asset[];
+  assets!: Promise<Asset[]>;
 }

@@ -7,7 +7,7 @@ import { Asset } from './asset.model';
 @Entity('appraisal_details')
 export class AppraisalDetail extends BaseModel {
   @PrimaryGeneratedColumn('uuid', { name: 'detail_appraisal_id' })
-  detailAppraisalID!: string;
+  detailAppraisalId!: string;
 
   @ManyToOne(() => Appraisal)
   @JoinColumn({ name: 'appraisal_id' })
@@ -17,9 +17,13 @@ export class AppraisalDetail extends BaseModel {
   @JoinColumn({ name: 'loan_request_asset_detail_id' })
   loanRequestAssetDetail!: LoanRequestAssetDetail;
 
-  @ManyToOne(() => Asset)
-  @JoinColumn({ name: 'asset_id' })
-  asset!: Asset;
+  /*
+   * Cỏ vẻ là không cần => sẽ bàn bạc lại sau
+   */
+
+  // @ManyToOne(() => Asset)
+  // @JoinColumn({ name: 'asset_id' })
+  // asset!: Asset;
 
   @Column('decimal', { precision: 15, scale: 2, name: 'appraisal_amount' })
   appraisalAmount!: number;

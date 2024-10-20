@@ -5,10 +5,10 @@ import { Permission } from './permission.model';
 
 @Entity('role_permissions')
 export class RolePermission extends BaseModel {
-  @PrimaryColumn('uuid', { name: 'role_id' })
+  @PrimaryColumn({ name: 'role_id' })
   roleId!: string;
 
-  @PrimaryColumn('uuid', { name: 'permission_id' })
+  @PrimaryColumn({ name: 'permission_id' })
   permissionId!: string;
 
   @ManyToOne(() => Role, { nullable: false })
@@ -19,9 +19,9 @@ export class RolePermission extends BaseModel {
   @JoinColumn({ name: 'permission_id' })
   permission!: Permission;
 
-  @Column('varchar', { length: 255, name: 'permission_types' })
-  permissionTypes!: string;
+  // @Column('varchar', { length: 255, name: 'permission_types' })
+  // permissionTypes!: string;
 
-  @Column('text', { nullable: true, name: 'notes' })
-  notes!: string | null;
+  // @Column('text', { nullable: true, name: 'notes' })
+  // notes!: string | null;
 }

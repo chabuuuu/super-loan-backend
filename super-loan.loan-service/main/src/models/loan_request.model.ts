@@ -40,8 +40,8 @@ export class LoanRequest extends BaseModel {
   @Column('decimal', { precision: 15, scale: 2, name: 'borrower_income' })
   borrowerIncome!: number;
 
-  @Column('text', { nullable: true, name: 'borrower_income_proof_documents' })
-  borrowerIncomeProofDocuments!: string;
+  @Column('simple-array', { nullable: true, name: 'borrower_income_proof_documents' })
+  borrowerIncomeProofDocuments!: string[];
 
   @ManyToOne(() => LoanPackage)
   @JoinColumn({ name: 'loan_package_id' })
@@ -79,10 +79,4 @@ export class LoanRequest extends BaseModel {
 
   @OneToMany(() => Contract, (contract) => contract.loanRequest)
   contracts!: Contract[];
-
-  @OneToMany(
-    () => TrackingContractInformation,
-    (tracking_contract_information) => tracking_contract_information.loanRequest
-  )
-  trackingContractInformations!: TrackingContractInformation[];
 }
