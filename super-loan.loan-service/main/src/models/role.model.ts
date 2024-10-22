@@ -1,20 +1,25 @@
-import { Account } from '@/models/account.model';
 import { injectable } from 'inversify';
-import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Column, Entity, Index, OneToMany, PrimaryColumn, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { BaseModel } from './base.model';
+import { Employee } from './employee.model';
+import { RolePermission } from './role_permission.model';
 
 @injectable()
-@Entity()
-export class Role {
-  @PrimaryGeneratedColumn('uuid')
-  id!: string;
+@Entity('roles')
+export class Role extends BaseModel {
+  @PrimaryColumn({
+    type: 'varchar',
+    length: 70,
+    name: 'role_id'
+  })
+  roleId!: string;
 
-  @Index({ unique: true })
-  @Column('varchar', { length: 30 })
-  name!: string;
+  @Column('varchar', { length: 90, name: 'role_name' })
+  roleName!: string;
 
-  @Column({ nullable: true })
-  description!: string;
+  // @OneToMany(() => Employee, (employee) => employee.role)
+  // employees!: Employee[];
 
-  @OneToMany(() => Account, (account) => account.role)
-  accounts!: Account[];
+  @OneToMany(() => RolePermission, (role_permission) => role_permission.role)
+  rolePermissions!: RolePermission[];
 }
