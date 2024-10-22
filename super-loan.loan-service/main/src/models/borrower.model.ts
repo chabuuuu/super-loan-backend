@@ -25,17 +25,17 @@ export class Borrower extends BaseModel {
   @Column('varchar', { length: 100 })
   password!: string;
 
-  @Column('varchar', { length: 20, name: 'social_login_type' })
+  @Column('varchar', { length: 20, nullable: true, name: 'social_login_type' })
   socialLoginType!: string;
 
   @Column('varchar', { length: 255, nullable: true, name: 'social_uid' })
   socialUid!: string;
 
-  @Column('varchar', { length: 20 })
+  @Column('varchar', { length: 20, nullable: true })
   status!: string;
 
   @OneToOne(() => BorrowerProfile, (borrower_profile) => borrower_profile.borrower)
-  borrowerProfiles!: BorrowerProfile;
+  borrowerProfile!: BorrowerProfile;
 
   @OneToMany(() => LoanRequest, (loan_request) => loan_request.borrower)
   loanRequests!: Promise<LoanRequest[]>;

@@ -1,27 +1,50 @@
-import { IsNotEmpty, IsString, IsEmail, IsStrongPassword } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsEmail,
+  IsStrongPassword,
+  IsDate,
+  IsBoolean,
+  MinLength,
+  IsPhoneNumber,
+  IsDateString
+} from 'class-validator';
 
 export class RegisterBorrowerReq {
+  @IsNotEmpty()
+  @IsString()
+  fullname!: string;
+
+  @IsNotEmpty()
+  @IsDateString()
+  birthday!: string;
+
   @IsNotEmpty()
   @IsEmail()
   email!: string;
 
   @IsNotEmpty()
-  @IsString()
-  @IsStrongPassword()
-  password!: string;
-
-  @IsNotEmpty()
-  @IsString()
+  @IsPhoneNumber()
   phoneNumber!: string;
 
   @IsNotEmpty()
   @IsString()
-  socialLoginType!: string;
+  homeAddress!: string;
 
-  @IsString()
-  socialUid?: string;
+  @IsNotEmpty()
+  @IsBoolean()
+  gender!: boolean;
 
   @IsNotEmpty()
   @IsString()
-  status!: string;
+  @IsStrongPassword()
+  @MinLength(6, { message: 'Password must be at least 6 characters' })
+  password!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  confirmPassword!: string;
+
+  socialLoginType?: string;
+  status?: string;
 }

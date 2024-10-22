@@ -1,4 +1,6 @@
 import { IBaseCrudController } from '@/controller/interfaces/i.base-curd.controller';
+import { LoginBorrowerReq } from '@/dto/borrower/login-borrower.req';
+import { LoginBorrowerRes } from '@/dto/borrower/login-borrower.res';
 import { RegisterBorrowerReq } from '@/dto/borrower/register-borrower.req';
 import { RegisterBorrowerRes } from '@/dto/borrower/register-borrower.res';
 import { Borrower } from '@/models/borrower.model';
@@ -25,6 +27,16 @@ export class BorrowerController {
       const result = await this.borrowerService.register(requestBody);
       const responseBody = convertToDto(RegisterBorrowerRes, result);
       res.send_ok('Register Borrower successful', responseBody);
+    } catch (error) {
+      next(error);
+    }
+  }
+  async login(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const requestBody: LoginBorrowerReq = req.body;
+      const result = await this.borrowerService.login(requestBody);
+      const responseBody = convertToDto(LoginBorrowerRes, result);
+      res.send_ok('Login successful', responseBody);
     } catch (error) {
       next(error);
     }
