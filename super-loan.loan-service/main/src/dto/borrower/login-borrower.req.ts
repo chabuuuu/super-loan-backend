@@ -1,17 +1,18 @@
-import { IsNotEmpty, IsString, IsStrongPassword, MinLength, IsPhoneNumber, IsEmail, ValidateIf } from 'class-validator';
+import { IsNotEmpty, IsString, IsStrongPassword, MinLength, ValidateIf, MaxLength, Matches } from 'class-validator';
 
 export class LoginBorrowerReq {
+  @IsNotEmpty()
   @ValidateIf((o) => !o.email)
-  @IsPhoneNumber()
-  phoneNumber?: string;
-
-  @ValidateIf((o) => !o.phoneNumber)
-  @IsEmail({}, { message: 'Email is not valid' })
-  email?: string;
+  @IsString()
+  @Matches(/^(0[235789][0-9]{8}|[\w\-.]+@[a-zA-Z\d\-.]+\.[a-zA-Z]{2,4})$/, {
+    message: 'Must be a valid email or Vietnamese phone number'
+  })
+  emailOrPhoneNumber!: string;
 
   @IsNotEmpty()
   @IsString()
   @IsStrongPassword()
   @MinLength(6, { message: 'Password must be at least 6 characters' })
+  @MaxLength(12)
   password!: string;
 }

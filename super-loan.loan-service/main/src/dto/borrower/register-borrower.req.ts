@@ -3,16 +3,19 @@ import {
   IsString,
   IsEmail,
   IsStrongPassword,
-  IsDate,
   IsBoolean,
   MinLength,
   IsPhoneNumber,
-  IsDateString
+  IsDateString,
+  MaxLength,
+  Matches
 } from 'class-validator';
 
 export class RegisterBorrowerReq {
   @IsNotEmpty()
   @IsString()
+  @MaxLength(50, { message: 'Fullname must not exceed 50 characters' })
+  @Matches(/^[a-zA-ZÀ-ỹ\s]*$/, { message: 'Fullname must not contain special characters' })
   fullname!: string;
 
   @IsNotEmpty()
@@ -24,7 +27,9 @@ export class RegisterBorrowerReq {
   email!: string;
 
   @IsNotEmpty()
-  @IsPhoneNumber()
+  @Matches(/^(0[3|5|7|8|9])+([0-9]{8})$/, {
+    message: 'Phone number must be a valid Vietnamese number'
+  })
   phoneNumber!: string;
 
   @IsNotEmpty()
@@ -32,13 +37,15 @@ export class RegisterBorrowerReq {
   homeAddress!: string;
 
   @IsNotEmpty()
-  @IsBoolean()
-  gender!: boolean;
+  @IsString()
+  @Matches(/^(MALE|FEMALE)$/, { message: 'Gender must be either MALE or FEMALE' })
+  gender!: 'MALE' | 'FEMALE';
 
   @IsNotEmpty()
   @IsString()
   @IsStrongPassword()
   @MinLength(6, { message: 'Password must be at least 6 characters' })
+  @MaxLength(12)
   password!: string;
 
   @IsNotEmpty()
