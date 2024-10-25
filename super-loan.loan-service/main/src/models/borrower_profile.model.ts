@@ -54,8 +54,8 @@ export class BorrowerProfile extends BaseModel {
   @Column('date')
   birthday!: Date;
 
-  @Column({ type: 'boolean' })
-  gender!: boolean;
+  @Column({ type: 'enum', enum: ['MALE', 'FEMALE'], default: 'MALE' })
+  gender!: 'MALE' | 'FEMALE';
 
   @Column('varchar', { length: 255, nullable: true, name: 'social_link' })
   socialLink!: string;
