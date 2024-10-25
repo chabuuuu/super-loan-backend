@@ -4,6 +4,7 @@ env:
   SERVICE_FOLDER: /super-loan.loan-service
   DEPLOY_FOLDER: /root/why-soft/super-loan/backend/loan-service
   ENV_FILE_PATH: /root/why-soft/super-loan/env_file/backend/super-loan.loan-service/.docker.env
+  IMAGE_NAME: haphuthinh/loan_loan-service:latest
 
 on:
   push:
@@ -13,22 +14,25 @@ on:
       - "super-loan.loan-service/**"
 
 jobs:
-  deploy:
+  build_and_publish:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Copy source code to server
-        uses: appleboy/scp-action@v0.1.1
-        with:
-          host: ${{ secrets.SUPER_LOAN_SERVER_HOST }}
-          username: ${{ secrets.SUPER_LOAN_SERVER_USER }}
-          password: ${{ secrets.SUPER_LOAN_SERVER_PASSWORD }}
-          source: "./*"
-          target: ${{ env.DEPLOY_FOLDER }}
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
+      - name: Build Docker image
+        run: docker build -t $IMAGE_NAME .
+
+      - name: Push Docker image to Docker Hub
+        run: docker push $IMAGE_NAME
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build_and_publish
+    steps:
       - name: Deploy to server
         uses: appleboy/ssh-action@v0.1.4
         with:
@@ -39,5 +43,5 @@ jobs:
           script: |
             cp ${{ env.ENV_FILE_PATH }} ${{ env.DEPLOY_FOLDER }}${{ env.SERVICE_FOLDER }}
             cd ${{ env.DEPLOY_FOLDER }}${{ env.SERVICE_FOLDER }}
-            sudo docker compose down       
-            docker compose up --build -d
+            sudo docker compose pull
+            sudo docker compose up -d
