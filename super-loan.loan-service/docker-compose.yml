@@ -3,11 +3,10 @@ version: "3.9"
 services:
   backend:
     container_name: super-loan.loan-service
-    build:
-      context: ./main
+    image: haphuthinh/loan_loan-service:latest
     restart: unless-stopped
     ports:
-      - "5000:4000"
+      - "7000:4000"
     env_file:
       - .docker.env
     networks:
