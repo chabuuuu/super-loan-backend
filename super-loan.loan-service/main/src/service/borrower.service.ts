@@ -38,15 +38,13 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
   async login(data: LoginBorrowerReq): Promise<LoginBorrowerRes> {
     let borrower: Borrower | null = null;
 
-    if (data.phoneNumber) {
+    if (/^\d{10,11}$/.test(data.emailOrPhoneNumber)) {
       borrower = await this.borrowerRepository.findOne({
-        filter: { phoneNumber: data.phoneNumber }
+        filter: { phoneNumber: data.emailOrPhoneNumber }
       });
-    }
-
-    if (!borrower && data.email) {
+    } else {
       borrower = await this.borrowerRepository.findOne({
-        filter: { email: data.email }
+        filter: { email: data.emailOrPhoneNumber }
       });
     }
 
@@ -61,7 +59,7 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     }
 
     const token = jwt.sign({ borrowerId: borrower!.borrowerId }, SECRET_KEY, {
-      expiresIn: 60 * 60
+      expiresIn: 4 * 60 * 60
     });
 
     const result = convertToDto(LoginBorrowerRes, borrower);
