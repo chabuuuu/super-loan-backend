@@ -8,7 +8,8 @@ import {
   IsPhoneNumber,
   IsDateString,
   MaxLength,
-  Matches
+  Matches,
+  ValidateIf
 } from 'class-validator';
 
 export class RegisterBorrowerReq {
@@ -50,6 +51,9 @@ export class RegisterBorrowerReq {
 
   @IsNotEmpty()
   @IsString()
+  @ValidateIf((o) => o.newPassword === o.confirmPassword, {
+    message: 'Confirm Password must match New Password'
+  })
   confirmPassword!: string;
 
   // @IsNotEmpty()

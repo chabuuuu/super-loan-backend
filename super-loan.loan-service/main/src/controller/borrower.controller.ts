@@ -1,10 +1,13 @@
 import { IBaseCrudController } from '@/controller/interfaces/i.base-curd.controller';
+import { ForgotPasswordReq } from '@/dto/borrower/forgotPassword-borrower.req';
 import { LoginBorrowerReq } from '@/dto/borrower/login-borrower.req';
 import { LoginBorrowerRes } from '@/dto/borrower/login-borrower.res';
 import { RegisterBorrowerReq } from '@/dto/borrower/register-borrower.req';
 import { RegisterBorrowerRes } from '@/dto/borrower/register-borrower.res';
 import { ResetPasswordReq } from '@/dto/borrower/resetPassword-borrower.req';
+import { ResetPasswordRes } from '@/dto/borrower/resetPassword-borrower.res';
 import { VerifyOtpReq } from '@/dto/borrower/verifyOtp-borrower.req';
+import { VerifyOtpRes } from '@/dto/borrower/verifyOtp-borrower.res';
 
 import { Borrower } from '@/models/borrower.model';
 import { IBorrowerService } from '@/service/interface/i.borrower.service';
@@ -46,8 +49,8 @@ export class BorrowerController {
   }
   async forgotPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { email } = req.body;
-      await this.borrowerService.forgotPassword(email);
+      const requestBody: ForgotPasswordReq = req.body;
+      await this.borrowerService.forgotPassword(requestBody);
       res.send_ok('OTP sent successfully');
     } catch (error) {
       next(error);
@@ -58,7 +61,8 @@ export class BorrowerController {
     try {
       const verifyOtpReq: VerifyOtpReq = req.body;
       const result = await this.borrowerService.verifyOtp(verifyOtpReq.email, verifyOtpReq.otp);
-      res.send_ok(result.message);
+      const responseBody = convertToDto(VerifyOtpRes, result);
+      res.send_ok(responseBody.message);
     } catch (error) {
       next(error);
     }
@@ -67,8 +71,12 @@ export class BorrowerController {
   async resetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const resetPasswordReq: ResetPasswordReq = req.body;
-      await this.borrowerService.resetPassword(resetPasswordReq);
-      res.send_ok('Password reset successfully');
+      const result = await this.borrowerService.resetPassword(resetPasswordReq);
+      const responseBody = convertToDto(ResetPasswordRes, {
+        borrowerId: result.borrowerId,
+        message: 'Password reset successfully'
+      });
+      res.send_ok(responseBody.message);
     } catch (error) {
       next(error);
     }

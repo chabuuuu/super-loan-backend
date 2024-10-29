@@ -14,11 +14,13 @@ import redis from '@/utils/redis/redis.util';
 import { ResetPasswordReq } from '@/dto/borrower/resetPassword-borrower.req';
 import { ResetPasswordRes } from '@/dto/borrower/resetPassword-borrower.res';
 import { ForgotPasswordReq } from '@/dto/borrower/forgotPassword-borrower.req';
-import { ForgotPasswordRes } from '@/dto/borrower/forgotPassword-borrwer.res';
 import { VerifyOtpRes } from '@/dto/borrower/verifyOtp-borrower.res';
 import { sendEmail } from '@/utils/email/email-sender.util';
 import axios from 'axios';
 import { createEmailContent } from '@/utils/email/create-email-content.util';
+import { createEmailOtpContent } from '@/utils/email/create-email-otp-content.util';
+import BaseError from '@/utils/error/base.error';
+import { ErrorCode } from '@/enums/error-code.enums';
 const SECRET_KEY: any = process.env.SECRET_KEY;
 
 @injectable()
@@ -28,9 +30,6 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
   constructor(@inject('BorrowerRepository') borrowerRepository: IBorrowerRepository<Borrower>) {
     super(borrowerRepository);
     this.borrowerRepository = borrowerRepository;
-  }
-  forgotPassword(requestBody: ForgotPasswordReq): Promise<ForgotPasswordRes> {
-    throw new Error('Method not implemented.');
   }
   // private async verifyCaptcha(captchaToken: string): Promise<boolean> {
   //   const secretKey = process.env.RECAPTCHA_SECRET_KEY;
@@ -113,7 +112,7 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     const isPasswordValid = await bcrypt.compare(data.password, borrower!.password);
 
     if (!isPasswordValid) {
-      throw new Error('Invalid password');
+      throw new BaseError(ErrorCode.AUTH_01, 'Password is incorrect');
     }
 
     const token = jwt.sign({ borrowerId: borrower!.borrowerId }, SECRET_KEY, {
@@ -125,26 +124,48 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
 
     return result;
   }
+  async forgotPassword(data: ForgotPasswordReq): Promise<void> {
+    let borrower: Borrower | null = null;
+
+    if (/^\d{10,11}$/.test(data.emailOrPhoneNumber)) {
+      borrower = await this.borrowerRepository.findOne({ filter: { phoneNumber: data.emailOrPhoneNumber } });
+    } else {
+      borrower = await this.borrowerRepository.findOne({ filter: { email: data.emailOrPhoneNumber } });
+    }
+
+    if (!borrower) {
+      throw new Error('Borrower not found');
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    await redis.set(`otp:${borrower.email}`, otp, 'EX', 300);
+
+    const emailContent = createEmailOtpContent(otp);
+    sendEmail({
+      from: { name: 'Công ty Alpha' },
+      to: { emailAddress: [borrower.email] },
+      subject: 'OTP for Password Reset',
+      text: emailContent
+    });
+  }
   async verifyOtp(email: string, inputOtp: string): Promise<VerifyOtpRes> {
     const storedOtp = await redis.get(`otp:${email}`);
-    if (!storedOtp) {
+    if (!storedOtp || storedOtp !== inputOtp) {
       throw new Error('Invalid OTP');
     }
 
-    if (storedOtp === inputOtp) {
-      return { message: 'OTP verified successfully' };
-    } else {
-      throw new Error('Invalid OTP');
-    }
+    await redis.del(`otp:${email}`);
+    return { message: 'OTP verified successfully' };
   }
 
   async resetPassword(requestBody: ResetPasswordReq): Promise<ResetPasswordRes> {
-    const { email, newPassword } = requestBody;
+    const { email, newPassword, confirmPassword } = requestBody;
 
-    const borrower = await this.borrowerRepository.findOne({
-      filter: { email }
-    });
+    if (newPassword !== confirmPassword) {
+      throw new Error('Passwords do not match');
+    }
 
+    const borrower = await this.borrowerRepository.findOne({ filter: { email } });
     if (!borrower) {
       throw new Error('Borrower not found');
     }
@@ -153,16 +174,13 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     borrower.password = hashedPassword;
 
     await this.borrowerRepository.findOneAndUpdate({
-      filter: {
-        borrowerId: borrower.borrowerId
-      },
+      filter: { borrowerId: borrower.borrowerId },
       updateData: borrower
     });
 
     const response = new ResetPasswordRes();
     response.borrowerId = borrower.borrowerId;
     response.message = 'Password has been reset successfully.';
-
     return response;
   }
 }
