@@ -7,6 +7,10 @@ export class ResetPasswordReq {
 
   @IsNotEmpty()
   @IsString()
+  otp!: string;
+
+  @IsNotEmpty()
+  @IsString()
   @IsStrongPassword()
   @MinLength(6, { message: 'Password must be at least 6 characters' })
   @MaxLength(12, { message: 'Password must not exceed 12 characters' })

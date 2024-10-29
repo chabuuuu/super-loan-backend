@@ -1,9 +1,9 @@
 import { borrowerController } from '@/container/borrower.container';
-import { ForgotPasswordReq } from '@/dto/borrower/forgotPassword-borrower.req';
+import { ForgotPasswordReq } from '@/dto/borrower/forgot-password-borrower.req';
 import { LoginBorrowerReq } from '@/dto/borrower/login-borrower.req';
 import { RegisterBorrowerReq } from '@/dto/borrower/register-borrower.req';
-import { ResetPasswordReq } from '@/dto/borrower/resetPassword-borrower.req';
-import { VerifyOtpReq } from '@/dto/borrower/verifyOtp-borrower.req';
+import { ResetPasswordReq } from '@/dto/borrower/reset-password-borrower.req';
+import { VerifyOtpReq } from '@/dto/borrower/verify-otp-borrower.req';
 import { classValidate } from '@/middleware/class-validate.middleware';
 import express from 'express';
 const borrowerRouter = express.Router();

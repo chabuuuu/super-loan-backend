@@ -11,16 +11,16 @@ import { LoginBorrowerReq } from '@/dto/borrower/login-borrower.req';
 import { LoginBorrowerRes } from '@/dto/borrower/login-borrower.res';
 import jwt from 'jsonwebtoken';
 import redis from '@/utils/redis/redis.util';
-import { ResetPasswordReq } from '@/dto/borrower/resetPassword-borrower.req';
-import { ResetPasswordRes } from '@/dto/borrower/resetPassword-borrower.res';
-import { ForgotPasswordReq } from '@/dto/borrower/forgotPassword-borrower.req';
-import { VerifyOtpRes } from '@/dto/borrower/verifyOtp-borrower.res';
+import { ForgotPasswordReq } from '@/dto/borrower/forgot-password-borrower.req';
+import { VerifyOtpRes } from '@/dto/borrower/verify-otp-borrower.res';
 import { sendEmail } from '@/utils/email/email-sender.util';
 import axios from 'axios';
 import { createEmailContent } from '@/utils/email/create-email-content.util';
 import { createEmailOtpContent } from '@/utils/email/create-email-otp-content.util';
 import BaseError from '@/utils/error/base.error';
 import { ErrorCode } from '@/enums/error-code.enums';
+import { ResetPasswordReq } from '@/dto/borrower/reset-password-borrower.req';
+import { ResetPasswordRes } from '@/dto/borrower/reset-password-borrower.res';
 const SECRET_KEY: any = process.env.SECRET_KEY;
 
 @injectable()
@@ -153,13 +153,19 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     if (!storedOtp || storedOtp !== inputOtp) {
       throw new Error('Invalid OTP');
     }
-
-    await redis.del(`otp:${email}`);
     return { message: 'OTP verified successfully' };
   }
 
-  async resetPassword(requestBody: ResetPasswordReq): Promise<ResetPasswordRes> {
-    const { email, newPassword, confirmPassword } = requestBody;
+  async resetPassword(email: string, inputOtp: string, requestBody: ResetPasswordReq): Promise<ResetPasswordRes> {
+    const storedOtp = await redis.get(`otp:${email}`);
+
+    if (!storedOtp || storedOtp !== inputOtp) {
+      throw new Error('Invalid OTP');
+    }
+
+    await redis.del(`otp:${email}`);
+
+    const { newPassword, confirmPassword } = requestBody;
 
     if (newPassword !== confirmPassword) {
       throw new Error('Passwords do not match');

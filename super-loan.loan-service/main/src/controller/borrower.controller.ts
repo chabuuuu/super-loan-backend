@@ -1,13 +1,13 @@
 import { IBaseCrudController } from '@/controller/interfaces/i.base-curd.controller';
-import { ForgotPasswordReq } from '@/dto/borrower/forgotPassword-borrower.req';
+import { ForgotPasswordReq } from '@/dto/borrower/forgot-password-borrower.req';
 import { LoginBorrowerReq } from '@/dto/borrower/login-borrower.req';
 import { LoginBorrowerRes } from '@/dto/borrower/login-borrower.res';
 import { RegisterBorrowerReq } from '@/dto/borrower/register-borrower.req';
 import { RegisterBorrowerRes } from '@/dto/borrower/register-borrower.res';
-import { ResetPasswordReq } from '@/dto/borrower/resetPassword-borrower.req';
-import { ResetPasswordRes } from '@/dto/borrower/resetPassword-borrower.res';
-import { VerifyOtpReq } from '@/dto/borrower/verifyOtp-borrower.req';
-import { VerifyOtpRes } from '@/dto/borrower/verifyOtp-borrower.res';
+import { ResetPasswordReq } from '@/dto/borrower/reset-password-borrower.req';
+import { ResetPasswordRes } from '@/dto/borrower/reset-password-borrower.res';
+import { VerifyOtpReq } from '@/dto/borrower/verify-otp-borrower.req';
+import { VerifyOtpRes } from '@/dto/borrower/verify-otp-borrower.res';
 
 import { Borrower } from '@/models/borrower.model';
 import { IBorrowerService } from '@/service/interface/i.borrower.service';
@@ -71,7 +71,8 @@ export class BorrowerController {
   async resetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const resetPasswordReq: ResetPasswordReq = req.body;
-      const result = await this.borrowerService.resetPassword(resetPasswordReq);
+      const { email, otp } = resetPasswordReq;
+      const result = await this.borrowerService.resetPassword(email, otp, resetPasswordReq);
       const responseBody = convertToDto(ResetPasswordRes, {
         borrowerId: result.borrowerId,
         message: 'Password reset successfully'
