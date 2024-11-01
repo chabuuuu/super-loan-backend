@@ -11,6 +11,10 @@ import { globalErrorHanlder } from '@/middleware/error-handle.middleware';
 import { AppDataSourceSingleton } from '@/database/db.datasource';
 import chalk from 'chalk';
 import responseFormater from 'response-formater';
+import i18n from 'i18n';
+import path from 'path';
+import { multilangMiddleware } from '@/middleware/multilang.middleware';
+
 /**
  * Express app
  */
@@ -31,6 +35,15 @@ if (GlobalConfig.helmet.enable) {
   app.use(helmet());
 }
 app.use(responseFormater);
+
+i18n.configure({
+  locales: ['en', 'vi'],
+  directory: path.join(__dirname, 'locales'),
+  defaultLocale: 'en',
+  objectNotation: true
+});
+
+app.use(multilangMiddleware);
 
 /**
  * Routes
