@@ -1,0 +1,8 @@
+{
+  "IS_NOT_EMPTY": "This field cannot be empty",
+  "IS_EMAIL": "This field must be a valid email address",
+  "IS_VALID_PHONE": "Must be a valid email or Vietnamese phone number",
+  "IS_STRING": "This field must be a string",
+  "IS_MIN_6": "This field must be at least 6 characters",
+  "IS_MAX_12": "This field must be at most 12 characters"
+}
