@@ -34,7 +34,7 @@ export class Borrower extends BaseModel {
   @Column('varchar', { length: 20, nullable: true })
   status!: string;
 
-  @OneToOne(() => BorrowerProfile, (borrower_profile) => borrower_profile.borrower)
+  @OneToOne(() => BorrowerProfile, (borrower_profile) => borrower_profile.borrower, { cascade: true })
   borrowerProfile!: BorrowerProfile;
 
   @OneToMany(() => LoanRequest, (loan_request) => loan_request.borrower)

@@ -16,8 +16,8 @@ export class BorrowerProfile extends BaseModel {
   @Column('varchar', { length: 100 })
   fullname!: string;
 
-  @Column('text')
-  avatar!: string;
+  @Column('text', { nullable: true })
+  avatar?: string;
 
   // @Index({ unique: true })
   @Column('simple-array')
@@ -27,20 +27,20 @@ export class BorrowerProfile extends BaseModel {
   @Column('simple-array', { name: 'phone_number' })
   phoneNumbers!: string[];
 
-  @Column('varchar', { length: 100, name: 'job_tittle' })
-  jobTitle!: string;
+  @Column('varchar', { length: 100, name: 'job_tittle', nullable: true })
+  jobTitle?: string;
 
-  @Column('decimal', { precision: 10, scale: 2 })
-  income!: number;
+  @Column('decimal', { precision: 10, scale: 2, nullable: true })
+  income?: number;
 
-  @Column('varchar', { length: 50, name: 'identify_card_number' })
-  identifyCardNumber!: string;
+  @Column('varchar', { length: 50, name: 'identify_card_number', nullable: true })
+  identifyCardNumber?: string;
 
-  @Column('date', { name: 'identify_card_issued_date' })
-  identifyCardIssuedDate!: Date;
+  @Column('date', { name: 'identify_card_issued_date', nullable: true })
+  identifyCardIssuedDate?: Date;
 
-  @Column('varchar', { length: 255, name: 'identify_card_issued_place' })
-  identifyCardIssuedPlace!: string;
+  @Column('varchar', { length: 255, name: 'identify_card_issued_place', nullable: true })
+  identifyCardIssuedPlace?: string;
 
   @Column('simple-array', { nullable: true, name: 'borrower_income_proof_documents' })
   borrowerIncomeProofDocuments!: string[];
