@@ -27,5 +27,11 @@ export const globalErrorHanlder = (error: any, req: Request, res: Response, next
     }
   }
 
+  if (error instanceof BaseError) {
+    if (error.code === ErrorCode.AUTH_01) {
+      return res.send_unauthorized('Unauthorized', error);
+    }
+  }
+
   return res.send_internalServerError(ReasonPhrases.INTERNAL_SERVER_ERROR, error.message);
 };
