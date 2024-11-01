@@ -1,0 +1,8 @@
+{
+  "IS_NOT_EMPTY": "Trường này không được để trống",
+  "IS_EMAIL": "Trường này phải là một địa chỉ email hợp lệ",
+  "IS_VALID_PHONE": "Phải là số điện thoại Việt Nam hợp lệ",
+  "IS_STRING": "Trường này phải là một chuỗi",
+  "IS_MIN_6": "Trường này phải có ít nhất 6 ký tự",
+  "IS_MAX_12": "Trường này chỉ được có nhiều nhất 12 ký tự"
+}
