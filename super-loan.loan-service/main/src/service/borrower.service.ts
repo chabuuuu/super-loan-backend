@@ -25,15 +25,25 @@ import { BorrowerProfile } from '@/models/borrower_profile.model';
 import { GetProfileRes } from '@/dto/borrower/get-profile.res';
 import { JwtClaimDto } from '@/dto/jwt-claim.dto';
 import _ from 'lodash';
+import { IPermissionSpecificRepository } from '@/repository/interface/i.permission_specific.repository';
+import { PermissionSpecific } from '@/models/permission_specific.model';
+import { UserTypeEnum } from '@/enums/user-type.enum';
+import { RoleTypeEnum } from '@/enums/role-type.enum';
 const SECRET_KEY: any = process.env.SECRET_KEY;
 
 @injectable()
 export class BorrowerService extends BaseCrudService<Borrower> implements IBorrowerService<Borrower> {
   private borrowerRepository: IBorrowerRepository<Borrower>;
+  private permissionSpecificRepository: IPermissionSpecificRepository<PermissionSpecific>;
 
-  constructor(@inject('BorrowerRepository') borrowerRepository: IBorrowerRepository<Borrower>) {
+  constructor(
+    @inject('BorrowerRepository') borrowerRepository: IBorrowerRepository<Borrower>,
+    @inject('PermissionSpecificRepository')
+    permissionSpecificRepository: IPermissionSpecificRepository<PermissionSpecific>
+  ) {
     super(borrowerRepository);
     this.borrowerRepository = borrowerRepository;
+    this.permissionSpecificRepository = permissionSpecificRepository;
   }
   // private async verifyCaptcha(captchaToken: string): Promise<boolean> {
   //   const secretKey = process.env.RECAPTCHA_SECRET_KEY;
@@ -129,7 +139,16 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
       throw new BaseError(ErrorCode.AUTH_01, 'Password is incorrect');
     }
 
-    const claim = new JwtClaimDto(borrower.borrowerId, '', [], '');
+    const borrowerPermissions = await this.permissionSpecificRepository.findMany({
+      filter: {
+        userId: borrower.borrowerId,
+        userType: UserTypeEnum.BORROWER
+      }
+    });
+
+    const permissionIds = borrowerPermissions!.map((permission) => permission.permissionId) || [''];
+
+    const claim = new JwtClaimDto(borrower.borrowerId, '', permissionIds, RoleTypeEnum.BORROWER);
 
     const token = jwt.sign(_.toPlainObject(claim), SECRET_KEY, {
       expiresIn: 4 * 60 * 60

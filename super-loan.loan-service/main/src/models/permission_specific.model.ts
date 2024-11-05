@@ -12,7 +12,7 @@ export class PermissionSpecific extends BaseModel {
   @PrimaryColumn('varchar', { name: 'permission_id' })
   permissionId!: string;
 
-  @ManyToOne(() => Permission, { nullable: false })
+  @ManyToOne(() => Permission, { nullable: false, eager: true })
   @JoinColumn({ name: 'permission_id' })
   permission!: Permission;
 
