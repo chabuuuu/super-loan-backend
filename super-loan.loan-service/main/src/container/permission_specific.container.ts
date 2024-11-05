@@ -19,12 +19,15 @@ class PermissionSpecificContainer extends BaseContainer {
   }
 
   export() {
+    const permissionSpecificRepository =
+      this.container.get<IPermissionSpecificRepository<PermissionSpecific>>('PermissionSpecificRepository');
     const permissionSpecificController = this.container.get<PermissionSpecificController>(PermissionSpecificController);
     const permissionSpecificService = this.container.get<IPermissionSpecificService<any>>('PermissionSpecificService');
-    return { permissionSpecificController, permissionSpecificService };
+    return { permissionSpecificController, permissionSpecificService, permissionSpecificRepository };
   }
 }
 
 const permissionSpecificContainer = new PermissionSpecificContainer();
-const { permissionSpecificController, permissionSpecificService } = permissionSpecificContainer.export();
-export { permissionSpecificController, permissionSpecificService };
+const { permissionSpecificController, permissionSpecificService, permissionSpecificRepository } =
+  permissionSpecificContainer.export();
+export { permissionSpecificController, permissionSpecificService, permissionSpecificRepository };
