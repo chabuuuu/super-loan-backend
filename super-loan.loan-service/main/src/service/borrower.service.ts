@@ -21,6 +21,7 @@ import BaseError from '@/utils/error/base.error';
 import { ErrorCode } from '@/enums/error-code.enums';
 import { ResetPasswordReq } from '@/dto/borrower/reset-password-borrower.req';
 import { ResetPasswordRes } from '@/dto/borrower/reset-password-borrower.res';
+import { BorrowerProfile } from '@/models/borrower_profile.model';
 const SECRET_KEY: any = process.env.SECRET_KEY;
 
 @injectable()
@@ -59,9 +60,19 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     //   throw new Error('Invalid CAPTCHA. Please try again.');
     // }
 
+    const borrowerProfile = new BorrowerProfile();
+    borrowerProfile.fullname = data.fullname;
+    borrowerProfile.birthday = new Date(data.birthday);
+    borrowerProfile.homeAddress = data.homeAddress;
+    borrowerProfile.emails = [data.email];
+    borrowerProfile.phoneNumbers = [data.phoneNumber];
+
+    (data as unknown as Borrower).borrowerProfile = borrowerProfile;
+
     const borrower = await this.borrowerRepository.create({
       data: data
     });
+
     const result = await this.borrowerRepository.findOne({
       filter: { borrowerId: borrower.borrowerId },
       relations: ['borrowerProfile']
