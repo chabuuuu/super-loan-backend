@@ -22,6 +22,9 @@ import { ErrorCode } from '@/enums/error-code.enums';
 import { ResetPasswordReq } from '@/dto/borrower/reset-password-borrower.req';
 import { ResetPasswordRes } from '@/dto/borrower/reset-password-borrower.res';
 import { BorrowerProfile } from '@/models/borrower_profile.model';
+import { GetProfileRes } from '@/dto/borrower/get-profile.res';
+import { JwtClaimDto } from '@/dto/jwt-claim.dto';
+import _ from 'lodash';
 const SECRET_KEY: any = process.env.SECRET_KEY;
 
 @injectable()
@@ -126,7 +129,9 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
       throw new BaseError(ErrorCode.AUTH_01, 'Password is incorrect');
     }
 
-    const token = jwt.sign({ borrowerId: borrower!.borrowerId }, SECRET_KEY, {
+    const claim = new JwtClaimDto(borrower.borrowerId, '', [], '');
+
+    const token = jwt.sign(_.toPlainObject(claim), SECRET_KEY, {
       expiresIn: 4 * 60 * 60
     });
 
@@ -199,5 +204,18 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     response.borrowerId = borrower.borrowerId;
     response.message = 'Password has been reset successfully.';
     return response;
+  }
+
+  async getProfile(borrowerId: string): Promise<GetProfileRes> {
+    const borrower = await this.borrowerRepository.findOne({
+      filter: { borrowerId },
+      relations: ['borrowerProfile']
+    });
+
+    if (!borrower || !borrower.borrowerProfile) {
+      throw new Error('Borrower profile not found');
+    }
+
+    return borrower.borrowerProfile;
   }
 }
