@@ -10,6 +10,7 @@ import lenderRouter from '@/routes/lender.route';
 import loanPackageRouter from '@/routes/loan_package.route';
 import loanRequestRouter from '@/routes/loan_request.route';
 import loanRequestAssetDetailRouter from '@/routes/loan_request_asset_detail.route';
+import menuRouter from '@/routes/menu.route';
 import notificationRouter from '@/routes/notification.route';
 import paymentInstallmentRouter from '@/routes/payment_installment.route';
 import paymentPlanRouter from '@/routes/payment_plan.route';
@@ -44,6 +45,7 @@ export function route(app: any) {
   app.use('/tracking-contract-information', trackingContractInformationRouter);
   app.use('/vault', vaultRouter);
   app.use('/version-loan-package', versionLoanPackageRouter);
+  app.use('/menu', menuRouter);
 
   //Check health
   app.get(`/health`, (req: any, res: any) => {

@@ -50,7 +50,7 @@ export class Borrower extends BaseModel {
   @OneToMany(() => Notification, (notification) => notification.subjectSendNotice)
   notifications!: Notification[];
 
-  @Column({ name: 'role_id' })
+  @Column({ name: 'role_id', nullable: true })
   roleId!: string;
 
   @ManyToOne(() => Role)

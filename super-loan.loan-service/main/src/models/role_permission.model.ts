@@ -18,10 +18,4 @@ export class RolePermission extends BaseModel {
   @ManyToOne(() => Permission, { nullable: false })
   @JoinColumn({ name: 'permission_id' })
   permission!: Permission;
-
-  // @Column('varchar', { length: 255, name: 'permission_types' })
-  // permissionTypes!: string;
-
-  // @Column('text', { nullable: true, name: 'notes' })
-  // notes!: string | null;
 }
