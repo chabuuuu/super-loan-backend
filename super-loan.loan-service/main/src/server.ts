@@ -38,7 +38,7 @@ app.use(responseFormater);
 
 i18n.configure({
   locales: ['en', 'vi'],
-  directory: path.join(__dirname, 'locales'),
+  directory: path.join(__dirname, '..', 'locales'),
   defaultLocale: 'en',
   objectNotation: true
 });

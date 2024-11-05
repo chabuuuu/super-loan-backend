@@ -22,8 +22,11 @@ export class Employee extends BaseModel {
   @Column('varchar', { length: 100 })
   password!: string;
 
+  @Column({ name: 'role_id' })
+  roleId!: string;
+
   @ManyToOne(() => Role, { onDelete: 'CASCADE' })
-  @JoinColumn()
+  @JoinColumn({ name: 'role_id' })
   role!: Role;
 
   @OneToOne(() => EmployeeProfile, (employee_profile) => employee_profile.employeeId)
@@ -31,9 +34,6 @@ export class Employee extends BaseModel {
 
   @OneToMany(() => Appraisal, (appraisal) => appraisal.appraisalStaff)
   appraisals!: Promise<Appraisal[]>;
-
-  @OneToMany(() => PermissionSpecific, (permission_specific) => permission_specific.user)
-  permissionSpecifics!: Promise<PermissionSpecific[]>;
 
   @Column('varchar', { length: 30 })
   status!: string;
