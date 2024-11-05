@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, OneToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, OneToOne, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseModel } from './base.model';
 import { LenderProfile } from './lender_profile.model';
 import { Contract } from './contract.model';
+import { Role } from '@/models/role.model';
 
 @Entity('lenders')
 export class Lender extends BaseModel {
@@ -31,4 +32,11 @@ export class Lender extends BaseModel {
 
   @OneToMany(() => Contract, (contract) => contract.lender)
   contracts!: Promise<Contract[]>;
+
+  @Column({ name: 'role_id' })
+  roleId!: string;
+
+  @ManyToOne(() => Role, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'role_id' })
+  role!: Role;
 }
