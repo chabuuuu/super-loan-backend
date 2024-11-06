@@ -1,5 +1,6 @@
 import { IBaseCrudController } from '@/controller/interfaces/i.base-curd.controller';
 import { ForgotPasswordReq } from '@/dto/borrower/forgot-password-borrower.req';
+import { GetProfileRes } from '@/dto/borrower/get-profile.res';
 import { LoginBorrowerReq } from '@/dto/borrower/login-borrower.req';
 import { LoginBorrowerRes } from '@/dto/borrower/login-borrower.res';
 import { RegisterBorrowerReq } from '@/dto/borrower/register-borrower.req';
@@ -10,6 +11,7 @@ import { VerifyOtpReq } from '@/dto/borrower/verify-otp-borrower.req';
 import { VerifyOtpRes } from '@/dto/borrower/verify-otp-borrower.res';
 
 import { Borrower } from '@/models/borrower.model';
+import { BorrowerProfile } from '@/models/borrower_profile.model';
 import { IBorrowerService } from '@/service/interface/i.borrower.service';
 import { ITYPES } from '@/types/interface.types';
 import { convertToDto } from '@/utils/dto-convert/convert-to-dto.util';
@@ -78,6 +80,24 @@ export class BorrowerController {
         message: 'Password reset successfully'
       });
       res.send_ok(responseBody.message);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user = req.user;
+      const borrowerId = user?.id;
+
+      if (!borrowerId) {
+        throw new Error('You must login');
+      }
+
+      const profileData = await this.borrowerService.getProfile(borrowerId);
+
+      const responseBody = convertToDto(GetProfileRes, profileData);
+      res.send_ok('Get Profile success', responseBody);
     } catch (error) {
       next(error);
     }

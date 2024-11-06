@@ -4,5 +4,7 @@ export enum RedisSchemaEnum {
   noneActiveEmailUserData = 'noneActiveEmailUserData',
   notification = 'notification',
   forgetPassword = 'forgetPassword',
-  activeEmail = 'activeEmail'
+  activeEmail = 'activeEmail',
+  banksData = 'banksData',
+  tinhThanhVietnamData = 'tinhThanhVietnamData'
 }

@@ -1,4 +1,5 @@
 import { ForgotPasswordReq } from '@/dto/borrower/forgot-password-borrower.req';
+import { GetProfileRes } from '@/dto/borrower/get-profile.res';
 import { LoginBorrowerReq } from '@/dto/borrower/login-borrower.req';
 import { LoginBorrowerRes } from '@/dto/borrower/login-borrower.res';
 import { RegisterBorrowerReq } from '@/dto/borrower/register-borrower.req';
@@ -15,4 +16,5 @@ export interface IBorrowerService<T extends BaseModelType> extends IBaseCrudServ
   forgotPassword(requestBody: ForgotPasswordReq): Promise<void>;
   resetPassword(email: string, inputOtp: string, requestBody: ResetPasswordReq): Promise<ResetPasswordRes>;
   verifyOtp(email: string, inputOtp: string): Promise<VerifyOtpRes>;
+  getProfile(borrowerId: string): Promise<GetProfileRes>;
 }
