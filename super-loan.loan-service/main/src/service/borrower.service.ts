@@ -29,21 +29,28 @@ import { IPermissionSpecificRepository } from '@/repository/interface/i.permissi
 import { PermissionSpecific } from '@/models/permission_specific.model';
 import { UserTypeEnum } from '@/enums/user-type.enum';
 import { RoleTypeEnum } from '@/enums/role-type.enum';
+import { ClientInfoDto } from '@/dto/client-info.dto';
+import { INotificationService } from '@/service/interface/i.notification.service';
+import { Notification } from '@/models/notification.model';
+import { NotificationType } from '@/enums/notification-type.enum';
 const SECRET_KEY: any = process.env.SECRET_KEY;
 
 @injectable()
 export class BorrowerService extends BaseCrudService<Borrower> implements IBorrowerService<Borrower> {
   private borrowerRepository: IBorrowerRepository<Borrower>;
   private permissionSpecificRepository: IPermissionSpecificRepository<PermissionSpecific>;
+  private notificationService: INotificationService<Notification>;
 
   constructor(
     @inject('BorrowerRepository') borrowerRepository: IBorrowerRepository<Borrower>,
     @inject('PermissionSpecificRepository')
-    permissionSpecificRepository: IPermissionSpecificRepository<PermissionSpecific>
+    permissionSpecificRepository: IPermissionSpecificRepository<PermissionSpecific>,
+    @inject('NotificationService') notificationService: INotificationService<Notification>
   ) {
     super(borrowerRepository);
     this.borrowerRepository = borrowerRepository;
     this.permissionSpecificRepository = permissionSpecificRepository;
+    this.notificationService = notificationService;
   }
   // private async verifyCaptcha(captchaToken: string): Promise<boolean> {
   //   const secretKey = process.env.RECAPTCHA_SECRET_KEY;
@@ -112,7 +119,7 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     });
     return convertToDto(RegisterBorrowerRes, result);
   }
-  async login(data: LoginBorrowerReq): Promise<LoginBorrowerRes> {
+  async login(data: LoginBorrowerReq, clientInfo: ClientInfoDto): Promise<LoginBorrowerRes> {
     // const isCaptchaValid = await this.verifyCaptcha(data.captchaToken);
     // if (!isCaptchaValid) {
     //   throw new Error('Invalid CAPTCHA. Please try again.');
@@ -156,6 +163,19 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
 
     const result = convertToDto(LoginBorrowerRes, borrower);
     result.token = token;
+
+    //Send notification login success
+    const notifcationContent = `Trên ${clientInfo.os} - ${clientInfo.city} -> ${clientInfo.device} - ${clientInfo.timezone}`;
+
+    this.notificationService.sendNotification(
+      NotificationType.NOTIFY_LOGIN,
+      'Bạn đã đăng nhập thành công',
+      notifcationContent,
+      {
+        id: borrower.borrowerId,
+        type: UserTypeEnum.BORROWER
+      }
+    );
 
     return result;
   }
