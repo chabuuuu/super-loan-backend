@@ -1,7 +1,9 @@
 import { IBaseCrudController } from '@/controller/interfaces/i.base-curd.controller';
+import { ErrorCode } from '@/enums/error-code.enums';
 import { Notification } from '@/models/notification.model';
 import { INotificationService } from '@/service/interface/i.notification.service';
 import { ITYPES } from '@/types/interface.types';
+import BaseError from '@/utils/error/base.error';
 import { NextFunction, Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 
@@ -15,5 +17,29 @@ export class NotificationController {
   ) {
     this.notificationService = notificationService;
     this.common = common;
+  }
+
+  /**
+   * * GET /me
+   */
+  async getMyNotification(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user = req.user;
+
+      if (!user) {
+        throw new BaseError(ErrorCode.AUTH_01, 'User not login');
+      }
+
+      const result = await this.notificationService.findMany({
+        filter: {
+          receiverId: user.id,
+          receiverType: user.roleId
+        },
+        order: [{ column: 'createAt', direction: 'DESC' }]
+      });
+      res.send_ok('Get my notification successful', result);
+    } catch (error) {
+      next(error);
+    }
   }
 }

@@ -7,6 +7,8 @@ import { IBorrowerRepository } from '@/repository/interface/i.borrower.repositor
 import { BaseContainer } from '@/container/base.container';
 import { IPermissionSpecificRepository } from '@/repository/interface/i.permission_specific.repository';
 import { PermissionSpecificRepository } from '@/repository/permission_specific.repository';
+import { INotificationService } from '@/service/interface/i.notification.service';
+import { notificationService } from '@/container/notification.container';
 
 class BorrowerContainer extends BaseContainer {
   constructor() {
@@ -19,6 +21,8 @@ class BorrowerContainer extends BaseContainer {
     this.container
       .bind<IPermissionSpecificRepository<any>>('PermissionSpecificRepository')
       .to(PermissionSpecificRepository);
+
+    this.container.bind<INotificationService<any>>('NotificationService').toConstantValue(notificationService);
   }
 
   export() {

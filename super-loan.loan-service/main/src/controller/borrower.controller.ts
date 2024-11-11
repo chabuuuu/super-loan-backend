@@ -9,12 +9,14 @@ import { ResetPasswordReq } from '@/dto/borrower/reset-password-borrower.req';
 import { ResetPasswordRes } from '@/dto/borrower/reset-password-borrower.res';
 import { VerifyOtpReq } from '@/dto/borrower/verify-otp-borrower.req';
 import { VerifyOtpRes } from '@/dto/borrower/verify-otp-borrower.res';
+import { ClientInfoDto } from '@/dto/client-info.dto';
 
 import { Borrower } from '@/models/borrower.model';
 import { BorrowerProfile } from '@/models/borrower_profile.model';
 import { IBorrowerService } from '@/service/interface/i.borrower.service';
 import { ITYPES } from '@/types/interface.types';
 import { convertToDto } from '@/utils/dto-convert/convert-to-dto.util';
+import { getClientInfo } from '@/utils/get-client-info.util';
 import { NextFunction, Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 
@@ -42,7 +44,8 @@ export class BorrowerController {
   async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const requestBody: LoginBorrowerReq = req.body;
-      const result = await this.borrowerService.login(requestBody);
+      const clientInfo = await getClientInfo(req);
+      const result = await this.borrowerService.login(requestBody, clientInfo);
       const responseBody = convertToDto(LoginBorrowerRes, result);
       res.send_ok('Login successful', responseBody);
     } catch (error) {

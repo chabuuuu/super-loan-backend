@@ -12,4 +12,19 @@ export class NotificationService extends BaseCrudService<Notification> implement
     super(notificationRepository);
     this.notificationRepository = notificationRepository;
   }
+
+  async sendNotification(
+    type: string,
+    title: string,
+    content: string,
+    receiver: { id: string; type: string }
+  ): Promise<void> {
+    const notification = new Notification();
+    notification.titleName = title;
+    notification.content = content;
+    notification.notiType = type;
+    notification.receiverId = receiver.id;
+    notification.receiverType = receiver.type;
+    await this.notificationRepository.create({ data: notification });
+  }
 }
