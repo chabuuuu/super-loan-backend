@@ -227,56 +227,48 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     });
 
     if (!borrower || !borrower.borrowerProfile) {
-      throw new Error('Borrower profile not found');
+      throw new Error('Borrower or Borrower Profile not found');
     }
 
-    const updatePayload: Partial<BorrowerProfile> = {
-      ...(updateData.fullname && { fullname: updateData.fullname }),
-      ...(updateData.avatar && { avatar: updateData.avatar }),
-      ...(updateData.emails && { emails: updateData.emails }),
-      ...(updateData.phoneNumbers && { phoneNumbers: updateData.phoneNumbers }),
-      ...(updateData.jobTitle && { jobTitle: updateData.jobTitle }),
-      ...(updateData.income && { income: updateData.income }),
-      ...(updateData.identifyCardNumber && { identifyCardNumber: updateData.identifyCardNumber }),
-      ...(updateData.identifyCardIssuedDate && { identifyCardIssuedDate: new Date(updateData.identifyCardIssuedDate) }),
-      ...(updateData.identifyCardIssuedPlace && { identifyCardIssuedPlace: updateData.identifyCardIssuedPlace }),
-      ...(updateData.borrowerIncomeProofDocuments && {
-        borrowerIncomeProofDocuments: updateData.borrowerIncomeProofDocuments
-      }),
-      ...(updateData.homeAddress && { homeAddress: updateData.homeAddress }),
-      ...(updateData.workAddress && { workAddress: updateData.workAddress }),
-      ...(updateData.birthday && { birthday: new Date(updateData.birthday) }),
-      ...(updateData.gender && { gender: updateData.gender }),
-      ...(updateData.socialLink && { socialLink: updateData.socialLink }),
-      ...(updateData.bankAccounts && {
-        bankAccounts: updateData.bankAccounts.map((account) => ({
+    borrower.email = updateData.emails ? updateData.emails[0] : borrower.email;
+    borrower.phoneNumber = updateData.phoneNumbers ? updateData.phoneNumbers[0] : borrower.phoneNumber;
+
+    const borrowerProfile = borrower.borrowerProfile;
+    borrowerProfile.fullname = updateData.fullname ?? borrowerProfile.fullname;
+    borrowerProfile.avatar = updateData.avatar ?? borrowerProfile.avatar;
+    borrowerProfile.emails = updateData.emails ?? borrowerProfile.emails;
+    borrowerProfile.phoneNumbers = updateData.phoneNumbers ?? borrowerProfile.phoneNumbers;
+    borrowerProfile.jobTitle = updateData.jobTitle ?? borrowerProfile.jobTitle;
+    borrowerProfile.income = updateData.income ?? borrowerProfile.income;
+    borrowerProfile.identifyCardNumber = updateData.identifyCardNumber ?? borrowerProfile.identifyCardNumber;
+    borrowerProfile.identifyCardIssuedDate = updateData.identifyCardIssuedDate
+      ? new Date(updateData.identifyCardIssuedDate)
+      : borrowerProfile.identifyCardIssuedDate;
+    borrowerProfile.identifyCardIssuedPlace =
+      updateData.identifyCardIssuedPlace ?? borrowerProfile.identifyCardIssuedPlace;
+    borrowerProfile.borrowerIncomeProofDocuments =
+      updateData.borrowerIncomeProofDocuments ?? borrowerProfile.borrowerIncomeProofDocuments;
+    borrowerProfile.homeAddress = updateData.homeAddress ?? borrowerProfile.homeAddress;
+    borrowerProfile.workAddress = updateData.workAddress ?? borrowerProfile.workAddress;
+    borrowerProfile.birthday = updateData.birthday ? new Date(updateData.birthday) : borrowerProfile.birthday;
+    borrowerProfile.gender = updateData.gender ?? borrowerProfile.gender;
+    borrowerProfile.socialLink = updateData.socialLink ?? borrowerProfile.socialLink;
+    borrowerProfile.bankAccounts = updateData.bankAccounts
+      ? updateData.bankAccounts.map((account) => ({
           accountNumber: account.accountNumber,
           bankName: account.bankName,
           isDefault: account.isDefault ?? false
         }))
-      }),
-      ...(updateData.signAttachments && { signAttachments: updateData.signAttachments })
-    };
+      : borrowerProfile.bankAccounts;
+    borrowerProfile.signAttachments = updateData.signAttachments ?? borrowerProfile.signAttachments;
 
-    Object.keys(updatePayload).forEach(
-      (key) =>
-        updatePayload[key as keyof BorrowerProfile] === undefined && delete updatePayload[key as keyof BorrowerProfile]
-    );
+    (updateData as unknown as Borrower).borrowerProfile = borrowerProfile;
 
     await this.borrowerRepository.findOneAndUpdate({
       filter: { borrowerId },
-      updateData: updatePayload
+      updateData: borrower
     });
 
-    const updatedBorrower = await this.borrowerRepository.findOne({
-      filter: { borrowerId },
-      relations: ['borrowerProfile']
-    });
-
-    if (!updatedBorrower || !updatedBorrower.borrowerProfile) {
-      throw new Error('Updated borrower profile not found');
-    }
-
-    return updatedBorrower.borrowerProfile;
+    return borrower.borrowerProfile;
   }
 }
