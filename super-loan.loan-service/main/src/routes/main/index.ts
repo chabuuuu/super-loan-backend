@@ -10,12 +10,14 @@ import lenderRouter from '@/routes/lender.route';
 import loanPackageRouter from '@/routes/loan_package.route';
 import loanRequestRouter from '@/routes/loan_request.route';
 import loanRequestAssetDetailRouter from '@/routes/loan_request_asset_detail.route';
+import menuRouter from '@/routes/menu.route';
 import notificationRouter from '@/routes/notification.route';
 import paymentInstallmentRouter from '@/routes/payment_installment.route';
 import paymentPlanRouter from '@/routes/payment_plan.route';
 import paymentSlipRouter from '@/routes/payment_slip.route';
 import receiptRouter from '@/routes/receipt.route';
 import roleRouter from '@/routes/role.route';
+import staticDataRouter from '@/routes/static_data.route';
 import statusContractRouter from '@/routes/status_contract.route';
 import trackingContractInformationRouter from '@/routes/tracking_contract_information.route';
 import vaultRouter from '@/routes/vault.route';
@@ -44,6 +46,8 @@ export function route(app: any) {
   app.use('/tracking-contract-information', trackingContractInformationRouter);
   app.use('/vault', vaultRouter);
   app.use('/version-loan-package', versionLoanPackageRouter);
+  app.use('/menu', menuRouter);
+  app.use('/static-data', staticDataRouter);
 
   //Check health
   app.get(`/health`, (req: any, res: any) => {

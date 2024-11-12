@@ -26,15 +26,36 @@ import { GetProfileRes } from '@/dto/borrower/get-profile.res';
 import { JwtClaimDto } from '@/dto/jwt-claim.dto';
 import _ from 'lodash';
 import { UpdateProfileReq } from '@/dto/borrower/update-profile.req';
+import { IPermissionSpecificRepository } from '@/repository/interface/i.permission_specific.repository';
+import { PermissionSpecific } from '@/models/permission_specific.model';
+import { UserTypeEnum } from '@/enums/user-type.enum';
+import { RoleTypeEnum } from '@/enums/role-type.enum';
+import { ClientInfoDto } from '@/dto/client-info.dto';
+import { INotificationService } from '@/service/interface/i.notification.service';
+import { Notification } from '@/models/notification.model';
+import { NotificationType } from '@/enums/notification-type.enum';
+import { IBorrowerProfileRepository } from '@/repository/interface/i.borrower_profile.repository';
 const SECRET_KEY: any = process.env.SECRET_KEY;
 
 @injectable()
 export class BorrowerService extends BaseCrudService<Borrower> implements IBorrowerService<Borrower> {
   private borrowerRepository: IBorrowerRepository<Borrower>;
+  private permissionSpecificRepository: IPermissionSpecificRepository<PermissionSpecific>;
+  private notificationService: INotificationService<Notification>;
+  private borrowerProfileRepository: IBorrowerProfileRepository<BorrowerProfile>;
 
-  constructor(@inject('BorrowerRepository') borrowerRepository: IBorrowerRepository<Borrower>) {
+  constructor(
+    @inject('BorrowerRepository') borrowerRepository: IBorrowerRepository<Borrower>,
+    @inject('PermissionSpecificRepository')
+    permissionSpecificRepository: IPermissionSpecificRepository<PermissionSpecific>,
+    @inject('NotificationService') notificationService: INotificationService<Notification>,
+    @inject('BorrowerProfileRepository') borrowerProfileRepository: IBorrowerProfileRepository<BorrowerProfile>
+  ) {
     super(borrowerRepository);
     this.borrowerRepository = borrowerRepository;
+    this.permissionSpecificRepository = permissionSpecificRepository;
+    this.notificationService = notificationService;
+    this.borrowerProfileRepository = borrowerProfileRepository;
   }
   // private async verifyCaptcha(captchaToken: string): Promise<boolean> {
   //   const secretKey = process.env.RECAPTCHA_SECRET_KEY;
@@ -103,7 +124,7 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     });
     return convertToDto(RegisterBorrowerRes, result);
   }
-  async login(data: LoginBorrowerReq): Promise<LoginBorrowerRes> {
+  async login(data: LoginBorrowerReq, clientInfo: ClientInfoDto): Promise<LoginBorrowerRes> {
     // const isCaptchaValid = await this.verifyCaptcha(data.captchaToken);
     // if (!isCaptchaValid) {
     //   throw new Error('Invalid CAPTCHA. Please try again.');
@@ -130,7 +151,16 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
       throw new BaseError(ErrorCode.AUTH_01, 'Password is incorrect');
     }
 
-    const claim = new JwtClaimDto(borrower.borrowerId, '', [], '');
+    const borrowerPermissions = await this.permissionSpecificRepository.findMany({
+      filter: {
+        userId: borrower.borrowerId,
+        userType: UserTypeEnum.BORROWER
+      }
+    });
+
+    const permissionIds = borrowerPermissions!.map((permission) => permission.permissionId) || [''];
+
+    const claim = new JwtClaimDto(borrower.borrowerId, '', permissionIds, RoleTypeEnum.BORROWER);
 
     const token = jwt.sign(_.toPlainObject(claim), SECRET_KEY, {
       expiresIn: 4 * 60 * 60
@@ -138,6 +168,19 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
 
     const result = convertToDto(LoginBorrowerRes, borrower);
     result.token = token;
+
+    //Send notification login success
+    const notifcationContent = `Trên ${clientInfo.os} - ${clientInfo.city} -> ${clientInfo.device} - ${clientInfo.timezone}`;
+
+    this.notificationService.sendNotification(
+      NotificationType.NOTIFY_LOGIN,
+      'Bạn đã đăng nhập thành công',
+      notifcationContent,
+      {
+        id: borrower.borrowerId,
+        type: UserTypeEnum.BORROWER
+      }
+    );
 
     return result;
   }

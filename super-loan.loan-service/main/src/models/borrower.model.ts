@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, Index, OneToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, Index, OneToOne, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseModel } from './base.model';
 import { BorrowerProfile } from './borrower_profile.model';
 import { LoanRequest } from './loan_request.model';
@@ -8,6 +8,7 @@ import { PaymentInstallment } from './payment_installment.model';
 import { Receipt } from './receipt.model';
 import { PaymentSlip } from './payment_slip.model';
 import { Notification } from './notification.model';
+import { Role } from '@/models/role.model';
 
 @Entity('borrowers')
 export class Borrower extends BaseModel {
@@ -46,18 +47,13 @@ export class Borrower extends BaseModel {
   @OneToMany(() => PaymentInstallment, (payment_installment) => payment_installment.customer)
   paymentInstallments!: Promise<PaymentInstallment[]>;
 
-  // @OneToMany(
-  //   () => TrackingContractInformation,
-  //   (tracking_contract_information) => tracking_contract_information.customerID
-  // )
-  // trackingContractInformations!: TrackingContractInformation[];
-
-  // @OneToMany(() => Receipt, (receipt) => receipt.objectReceipt)
-  // receipts!: Receipt[];
-
-  // @OneToMany(() => PaymentSlip, (payment_slip) => payment_slip.objectSlip)
-  // paymentSlips!: PaymentSlip[];
-
   @OneToMany(() => Notification, (notification) => notification.subjectSendNotice)
   notifications!: Notification[];
+
+  @Column({ name: 'role_id', nullable: true })
+  roleId!: string;
+
+  @ManyToOne(() => Role)
+  @JoinColumn({ name: 'role_id' })
+  role!: Role;
 }

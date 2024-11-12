@@ -20,7 +20,7 @@
     ]
   },
   "helmet": {
-    "enable": true
+    "enable": false
   },
   "enviroment": "production",
   "swagger": {

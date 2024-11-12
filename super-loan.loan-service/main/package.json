@@ -30,11 +30,13 @@
     "@commitlint/config-conventional": "^19.2.2",
     "@types/config": "^3.3.5",
     "@types/cors": "^2.8.17",
+    "@types/geoip-lite": "^1.4.4",
     "@types/i18n": "^0.13.12",
     "@types/lodash": "^4.17.13",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.11.24",
     "@types/nodemailer": "^6.4.16",
+    "@types/useragent": "^2.3.4",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "eslint": "^8.57.0",
@@ -63,6 +65,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.18.3",
+    "geoip-lite": "^1.4.10",
     "helmet": "^7.1.0",
     "i18n": "^0.15.1",
     "inversify": "^6.0.2",
@@ -79,6 +82,7 @@
     "response-formater": "^1.0.2",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "useragent": "^2.3.0"
   }
 }
