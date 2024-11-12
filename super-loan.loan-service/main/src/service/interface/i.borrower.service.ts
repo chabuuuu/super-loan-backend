@@ -6,7 +6,9 @@ import { RegisterBorrowerReq } from '@/dto/borrower/register-borrower.req';
 import { RegisterBorrowerRes } from '@/dto/borrower/register-borrower.res';
 import { ResetPasswordReq } from '@/dto/borrower/reset-password-borrower.req';
 import { ResetPasswordRes } from '@/dto/borrower/reset-password-borrower.res';
+import { UpdateProfileReq } from '@/dto/borrower/update-profile.req';
 import { VerifyOtpRes } from '@/dto/borrower/verify-otp-borrower.res';
+import { BorrowerProfile } from '@/models/borrower_profile.model';
 import { IBaseCrudService } from '@/service/interface/i.base.service';
 import { BaseModelType } from '@/types/base-model.types';
 
@@ -17,4 +19,5 @@ export interface IBorrowerService<T extends BaseModelType> extends IBaseCrudServ
   resetPassword(email: string, inputOtp: string, requestBody: ResetPasswordReq): Promise<ResetPasswordRes>;
   verifyOtp(email: string, inputOtp: string): Promise<VerifyOtpRes>;
   getProfile(borrowerId: string): Promise<GetProfileRes>;
+  updateProfile(borrowerId: string, updateData: UpdateProfileReq): Promise<GetProfileRes>;
 }

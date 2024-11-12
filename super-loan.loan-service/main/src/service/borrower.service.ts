@@ -25,6 +25,7 @@ import { BorrowerProfile } from '@/models/borrower_profile.model';
 import { GetProfileRes } from '@/dto/borrower/get-profile.res';
 import { JwtClaimDto } from '@/dto/jwt-claim.dto';
 import _ from 'lodash';
+import { UpdateProfileReq } from '@/dto/borrower/update-profile.req';
 const SECRET_KEY: any = process.env.SECRET_KEY;
 
 @injectable()
@@ -217,5 +218,65 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     }
 
     return borrower.borrowerProfile;
+  }
+
+  async updateProfile(borrowerId: string, updateData: UpdateProfileReq): Promise<GetProfileRes> {
+    const borrower = await this.borrowerRepository.findOne({
+      filter: { borrowerId },
+      relations: ['borrowerProfile']
+    });
+
+    if (!borrower || !borrower.borrowerProfile) {
+      throw new Error('Borrower profile not found');
+    }
+
+    const updatePayload: Partial<BorrowerProfile> = {
+      ...(updateData.fullname && { fullname: updateData.fullname }),
+      ...(updateData.avatar && { avatar: updateData.avatar }),
+      ...(updateData.emails && { emails: updateData.emails }),
+      ...(updateData.phoneNumbers && { phoneNumbers: updateData.phoneNumbers }),
+      ...(updateData.jobTitle && { jobTitle: updateData.jobTitle }),
+      ...(updateData.income && { income: updateData.income }),
+      ...(updateData.identifyCardNumber && { identifyCardNumber: updateData.identifyCardNumber }),
+      ...(updateData.identifyCardIssuedDate && { identifyCardIssuedDate: new Date(updateData.identifyCardIssuedDate) }),
+      ...(updateData.identifyCardIssuedPlace && { identifyCardIssuedPlace: updateData.identifyCardIssuedPlace }),
+      ...(updateData.borrowerIncomeProofDocuments && {
+        borrowerIncomeProofDocuments: updateData.borrowerIncomeProofDocuments
+      }),
+      ...(updateData.homeAddress && { homeAddress: updateData.homeAddress }),
+      ...(updateData.workAddress && { workAddress: updateData.workAddress }),
+      ...(updateData.birthday && { birthday: new Date(updateData.birthday) }),
+      ...(updateData.gender && { gender: updateData.gender }),
+      ...(updateData.socialLink && { socialLink: updateData.socialLink }),
+      ...(updateData.bankAccounts && {
+        bankAccounts: updateData.bankAccounts.map((account) => ({
+          accountNumber: account.accountNumber,
+          bankName: account.bankName,
+          isDefault: account.isDefault ?? false
+        }))
+      }),
+      ...(updateData.signAttachments && { signAttachments: updateData.signAttachments })
+    };
+
+    Object.keys(updatePayload).forEach(
+      (key) =>
+        updatePayload[key as keyof BorrowerProfile] === undefined && delete updatePayload[key as keyof BorrowerProfile]
+    );
+
+    await this.borrowerRepository.findOneAndUpdate({
+      filter: { borrowerId },
+      updateData: updatePayload
+    });
+
+    const updatedBorrower = await this.borrowerRepository.findOne({
+      filter: { borrowerId },
+      relations: ['borrowerProfile']
+    });
+
+    if (!updatedBorrower || !updatedBorrower.borrowerProfile) {
+      throw new Error('Updated borrower profile not found');
+    }
+
+    return updatedBorrower.borrowerProfile;
   }
 }

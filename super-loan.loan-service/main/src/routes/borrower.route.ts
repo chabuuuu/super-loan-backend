@@ -23,6 +23,8 @@ borrowerRouter
 
   .post('/reset-password', classValidate(ResetPasswordReq), borrowerController.resetPassword.bind(borrowerController))
 
-  .get('/get-profile', authenticateJWT, borrowerController.getProfile.bind(borrowerController));
+  .get('/get-profile', authenticateJWT, borrowerController.getProfile.bind(borrowerController))
+
+  .put('/update-profile', authenticateJWT, borrowerController.updateProfile.bind(borrowerController));
 
 export default borrowerRouter;
