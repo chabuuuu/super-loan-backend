@@ -7,6 +7,8 @@ import { RegisterBorrowerReq } from '@/dto/borrower/register-borrower.req';
 import { RegisterBorrowerRes } from '@/dto/borrower/register-borrower.res';
 import { ResetPasswordReq } from '@/dto/borrower/reset-password-borrower.req';
 import { ResetPasswordRes } from '@/dto/borrower/reset-password-borrower.res';
+import { UpdateProfileReq } from '@/dto/borrower/update-profile.req';
+import { UpdateProfileRes } from '@/dto/borrower/update-profile.res';
 import { VerifyOtpReq } from '@/dto/borrower/verify-otp-borrower.req';
 import { VerifyOtpRes } from '@/dto/borrower/verify-otp-borrower.res';
 import { ClientInfoDto } from '@/dto/client-info.dto';
@@ -98,9 +100,27 @@ export class BorrowerController {
       }
 
       const profileData = await this.borrowerService.getProfile(borrowerId);
-
       const responseBody = convertToDto(GetProfileRes, profileData);
       res.send_ok('Get Profile success', responseBody);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user = req.user;
+      const borrowerId = user?.id;
+
+      if (!borrowerId) {
+        throw new Error('You must login');
+      }
+
+      const updateData: UpdateProfileReq = req.body;
+      const updatedProfile = await this.borrowerService.updateProfile(borrowerId, updateData);
+      const responseBody = convertToDto(UpdateProfileRes, updatedProfile);
+
+      res.send_ok('Profile updated successfully', responseBody);
     } catch (error) {
       next(error);
     }

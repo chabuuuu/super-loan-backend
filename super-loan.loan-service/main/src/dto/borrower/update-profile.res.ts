@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 
-export class GetProfileRes {
+export class UpdateProfileRes {
   @Expose()
   borrowerId!: string;
 
@@ -11,10 +11,10 @@ export class GetProfileRes {
   avatar?: string;
 
   @Expose()
-  emails!: { title: string; content: string }[];
+  emails!: string[];
 
   @Expose()
-  phoneNumbers!: { title: string; content: string }[];
+  phoneNumbers!: string[];
 
   @Expose()
   jobTitle?: string;

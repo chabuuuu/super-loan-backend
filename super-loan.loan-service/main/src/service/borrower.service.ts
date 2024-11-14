@@ -25,6 +25,7 @@ import { BorrowerProfile } from '@/models/borrower_profile.model';
 import { GetProfileRes } from '@/dto/borrower/get-profile.res';
 import { JwtClaimDto } from '@/dto/jwt-claim.dto';
 import _ from 'lodash';
+import { UpdateProfileReq } from '@/dto/borrower/update-profile.req';
 import { IPermissionSpecificRepository } from '@/repository/interface/i.permission_specific.repository';
 import { PermissionSpecific } from '@/models/permission_specific.model';
 import { UserTypeEnum } from '@/enums/user-type.enum';
@@ -88,8 +89,8 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     borrowerProfile.fullname = data.fullname;
     borrowerProfile.birthday = new Date(data.birthday);
     borrowerProfile.homeAddress = data.homeAddress;
-    borrowerProfile.emails = [data.email];
-    borrowerProfile.phoneNumbers = [data.phoneNumber];
+    borrowerProfile.emails = data.email ? [{ title: 'Primary Email', content: data.email }] : [];
+    borrowerProfile.phoneNumbers = data.phoneNumber ? [{ title: 'Primary Phone', content: data.phoneNumber }] : [];
 
     (data as unknown as Borrower).borrowerProfile = borrowerProfile;
 
@@ -260,5 +261,80 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     }
 
     return borrower.borrowerProfile;
+  }
+
+  async updateProfile(borrowerId: string, updateData: UpdateProfileReq): Promise<GetProfileRes> {
+    const updatedBorrower = await this.borrowerRepository.findOne({
+      filter: { borrowerId },
+      relations: ['borrowerProfile']
+    });
+
+    if (!updatedBorrower || !updatedBorrower.borrowerProfile) {
+      throw new Error('Borrower profile not found');
+    }
+
+    const borrowerUpdatePayload: Partial<Borrower> = {
+      email: updateData.emails && updateData.emails.length > 0 ? updateData.emails[0].content : updatedBorrower.email,
+      phoneNumber:
+        updateData.phoneNumbers && updateData.phoneNumbers.length > 0
+          ? updateData.phoneNumbers[0].content
+          : updatedBorrower.phoneNumber
+    };
+
+    const borrowerProfileUpdatePayload: Partial<BorrowerProfile> = {
+      fullname: updateData.fullname,
+      avatar: updateData.avatar,
+      emails: updateData.emails?.map((email) => ({
+        title: email.title,
+        content: email.content
+      })),
+      phoneNumbers: updateData.phoneNumbers?.map((phone) => ({
+        title: phone.title ?? '',
+        content: phone.content
+      })),
+      jobTitle: updateData.jobTitle,
+      income: updateData.income,
+      identifyCardNumber: updateData.identifyCardNumber,
+      identifyCardIssuedDate: updateData.identifyCardIssuedDate
+        ? new Date(updateData.identifyCardIssuedDate)
+        : undefined,
+      identifyCardIssuedPlace: updateData.identifyCardIssuedPlace,
+      borrowerIncomeProofDocuments: updateData.borrowerIncomeProofDocuments,
+      homeAddress: updateData.homeAddress,
+      workAddress: updateData.workAddress,
+      birthday: updateData.birthday ? new Date(updateData.birthday) : undefined,
+      gender: updateData.gender,
+      socialLink: updateData.socialLink,
+      bankAccounts: updateData.bankAccounts?.map((account) => ({
+        bankId: account.bankId,
+        accountNumber: account.accountNumber,
+        bankName: account.bankName,
+        isDefault: account.isDefault ?? false
+      })),
+      signAttachments: updateData.signAttachments
+    };
+
+    Object.keys(borrowerProfileUpdatePayload).forEach(
+      (key) =>
+        borrowerProfileUpdatePayload[key as keyof BorrowerProfile] === undefined &&
+        delete borrowerProfileUpdatePayload[key as keyof BorrowerProfile]
+    );
+
+    await this.borrowerRepository.findOneAndUpdate({
+      filter: { borrowerId },
+      updateData: borrowerUpdatePayload
+    });
+
+    await this.borrowerProfileRepository.findOneAndUpdate({
+      filter: { borrowerId },
+      updateData: borrowerProfileUpdatePayload
+    });
+
+    const updatedProfile = await this.borrowerRepository.findOne({
+      filter: { borrowerId },
+      relations: ['borrowerProfile']
+    });
+
+    return updatedProfile!.borrowerProfile;
   }
 }

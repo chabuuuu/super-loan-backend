@@ -2,6 +2,11 @@ import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToMany, Index, O
 import { Borrower } from './borrower.model';
 import { BaseModel } from './base.model';
 
+export enum IdentifyCardIssuedPlace {
+  RESIDENCE_REGISTRY = 'RESIDENCE_REGISTRY',
+  ADMINISTRATIVE_POLICE = 'ADMINISTRATIVE_POLICE'
+}
+
 @Entity('borrower_profiles')
 export class BorrowerProfile extends BaseModel {
   @PrimaryColumn({
@@ -20,12 +25,12 @@ export class BorrowerProfile extends BaseModel {
   avatar?: string;
 
   // @Index({ unique: true })
-  @Column('simple-array')
-  emails!: string[];
+  @Column('json')
+  emails!: { title: string; content: string }[];
 
   // @Index({ unique: true })
-  @Column('simple-array', { name: 'phone_number' })
-  phoneNumbers!: string[];
+  @Column('json', { name: 'phone_number' })
+  phoneNumbers!: { title: string; content: string }[];
 
   @Column('varchar', { length: 100, name: 'job_tittle', nullable: true })
   jobTitle?: string;
@@ -39,7 +44,12 @@ export class BorrowerProfile extends BaseModel {
   @Column('date', { name: 'identify_card_issued_date', nullable: true })
   identifyCardIssuedDate?: Date;
 
-  @Column('varchar', { length: 255, name: 'identify_card_issued_place', nullable: true })
+  @Column({
+    type: 'enum',
+    enum: IdentifyCardIssuedPlace,
+    nullable: true,
+    name: 'identify_card_issued_place'
+  })
   identifyCardIssuedPlace?: string;
 
   @Column('simple-array', { nullable: true, name: 'borrower_income_proof_documents' })
@@ -61,7 +71,7 @@ export class BorrowerProfile extends BaseModel {
   socialLink!: string;
 
   @Column('jsonb', { nullable: true, name: 'bank_accounts' })
-  bankAccounts!: { accountNumber: string; bankName: string; isDefault: boolean }[];
+  bankAccounts!: { bankId: string; accountNumber: string; bankName: string; isDefault: boolean }[];
 
   @Column('varchar', { length: 255, nullable: true, name: 'sign_attachments' })
   signAttachments!: string[];
