@@ -8,7 +8,6 @@ import cors from 'cors';
 import morgan from 'morgan';
 import { endRequestPipelineMiddleware } from '@/middleware/end-request-pipeline.middleware';
 import { globalErrorHanlder } from '@/middleware/error-handle.middleware';
-import { AppDataSourceSingleton } from '@/database/db.datasource';
 import chalk from 'chalk';
 import responseFormater from 'response-formater';
 /**
@@ -49,17 +48,9 @@ app.use(endRequestPipelineMiddleware);
 /**
  * Server
  */
-AppDataSourceSingleton.getInstance()
-  .initialize()
-  .then(async () => {
-    console.log(chalk.green('Database connected'));
-    const port = GlobalConfig.server.port || 3000;
-    app.listen(port, () => {
-      console.log(chalk.green(`Server is running on http://localhost:${port} in ${GlobalConfig.enviroment} mode`));
-    });
-  })
-  .catch((error) => {
-    console.log(error);
-  });
+const port = GlobalConfig.server.port || 3000;
+app.listen(port, () => {
+  console.log(chalk.green(`Server is running on http://localhost:${port} in ${GlobalConfig.enviroment} mode`));
+});
 
 export default app;
