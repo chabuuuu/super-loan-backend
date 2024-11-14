@@ -33,6 +33,7 @@ import { ClientInfoDto } from '@/dto/client-info.dto';
 import { INotificationService } from '@/service/interface/i.notification.service';
 import { Notification } from '@/models/notification.model';
 import { NotificationType } from '@/enums/notification-type.enum';
+import { IBorrowerProfileRepository } from '@/repository/interface/i.borrower_profile.repository';
 const SECRET_KEY: any = process.env.SECRET_KEY;
 
 @injectable()
@@ -40,17 +41,20 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
   private borrowerRepository: IBorrowerRepository<Borrower>;
   private permissionSpecificRepository: IPermissionSpecificRepository<PermissionSpecific>;
   private notificationService: INotificationService<Notification>;
+  private borrowerProfileRepository: IBorrowerProfileRepository<BorrowerProfile>;
 
   constructor(
     @inject('BorrowerRepository') borrowerRepository: IBorrowerRepository<Borrower>,
     @inject('PermissionSpecificRepository')
     permissionSpecificRepository: IPermissionSpecificRepository<PermissionSpecific>,
-    @inject('NotificationService') notificationService: INotificationService<Notification>
+    @inject('NotificationService') notificationService: INotificationService<Notification>,
+    @inject('BorrowerProfileRepository') borrowerProfileRepository: IBorrowerProfileRepository<BorrowerProfile>
   ) {
     super(borrowerRepository);
     this.borrowerRepository = borrowerRepository;
     this.permissionSpecificRepository = permissionSpecificRepository;
     this.notificationService = notificationService;
+    this.borrowerProfileRepository = borrowerProfileRepository;
   }
   // private async verifyCaptcha(captchaToken: string): Promise<boolean> {
   //   const secretKey = process.env.RECAPTCHA_SECRET_KEY;
