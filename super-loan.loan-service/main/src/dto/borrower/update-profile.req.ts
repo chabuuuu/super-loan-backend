@@ -10,8 +10,46 @@ import {
   IsArray,
   ValidateNested,
   IsEnum,
-  IsNumber
+  IsNumber,
+  IsNotEmpty,
+  IsObject
 } from 'class-validator';
+
+class Email {
+  @IsString()
+  @IsNotEmpty({ message: 'Title cannot be empty' })
+  title: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Content cannot be empty' })
+  @IsEmail({}, { each: true, message: 'Each email must be a valid email address' })
+  content: string;
+
+  constructor(title: string, content: string) {
+    this.title = title;
+    this.content = content;
+  }
+}
+
+class PhoneNumber {
+  @IsString()
+  @IsOptional()
+  @IsNotEmpty({ message: 'Title cannot be empty' })
+  title?: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Content cannot be empty' })
+  @Matches(/^0(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7,8}$/, {
+    each: true,
+    message: 'Each phone number must be a valid Vietnamese number'
+  })
+  content: string;
+
+  constructor(content: string, title?: string) {
+    this.content = content;
+    this.title = title || '';
+  }
+}
 
 export class UpdateProfileReq {
   @IsOptional()
@@ -26,16 +64,13 @@ export class UpdateProfileReq {
 
   @IsOptional()
   @IsArray()
-  @IsEmail({}, { each: true, message: 'Each email must be a valid email address' })
-  emails?: string[];
+  @IsObject({ each: true })
+  emails?: Email[];
 
   @IsOptional()
   @IsArray()
-  @Matches(/^0(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7,8}$/, {
-    each: true,
-    message: 'Each phone number must be a valid Vietnamese number'
-  })
-  phoneNumbers?: string[];
+  @IsObject({ each: true })
+  phoneNumbers?: PhoneNumber[];
 
   @IsOptional()
   @IsString()

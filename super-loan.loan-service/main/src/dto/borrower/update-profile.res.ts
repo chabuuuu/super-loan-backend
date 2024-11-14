@@ -10,6 +10,7 @@ export class UpdateProfileRes {
   @Expose()
   avatar?: string;
 
+  @Expose()
   emails!: string[];
 
   @Expose()
