@@ -134,6 +134,9 @@ export class UpdateProfileReq {
 
 export class BankAccount {
   @IsString()
+  bankId!: string;
+
+  @IsString()
   accountNumber!: string;
 
   @IsString()

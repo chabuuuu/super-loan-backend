@@ -306,6 +306,7 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
       gender: updateData.gender,
       socialLink: updateData.socialLink,
       bankAccounts: updateData.bankAccounts?.map((account) => ({
+        bankId: account.bankId,
         accountNumber: account.accountNumber,
         bankName: account.bankName,
         isDefault: account.isDefault ?? false

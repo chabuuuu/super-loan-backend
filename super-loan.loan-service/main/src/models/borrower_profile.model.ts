@@ -71,7 +71,7 @@ export class BorrowerProfile extends BaseModel {
   socialLink!: string;
 
   @Column('jsonb', { nullable: true, name: 'bank_accounts' })
-  bankAccounts!: { accountNumber: string; bankName: string; isDefault: boolean }[];
+  bankAccounts!: { bankId: string; accountNumber: string; bankName: string; isDefault: boolean }[];
 
   @Column('varchar', { length: 255, nullable: true, name: 'sign_attachments' })
   signAttachments!: string[];
