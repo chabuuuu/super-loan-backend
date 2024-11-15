@@ -11,10 +11,13 @@ export class GetProfileRes {
   avatar?: string;
 
   @Expose()
-  emails!: { title: string; content: string }[];
+  personalEmail!: string;
 
   @Expose()
-  phoneNumbers!: { title: string; content: string }[];
+  workEmail!: string;
+
+  @Expose()
+  phoneNumber!: string;
 
   @Expose()
   jobTitle?: string;
