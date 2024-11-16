@@ -89,8 +89,8 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     borrowerProfile.fullname = data.fullname;
     borrowerProfile.birthday = new Date(data.birthday);
     borrowerProfile.homeAddress = data.homeAddress;
-    borrowerProfile.emails = data.email ? [{ title: 'Primary Email', content: data.email }] : [];
-    borrowerProfile.phoneNumbers = data.phoneNumber ? [{ title: 'Primary Phone', content: data.phoneNumber }] : [];
+    borrowerProfile.personalEmail = data.email;
+    borrowerProfile.phoneNumber = data.phoneNumber;
 
     (data as unknown as Borrower).borrowerProfile = borrowerProfile;
 
@@ -274,24 +274,14 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     }
 
     const borrowerUpdatePayload: Partial<Borrower> = {
-      email: updateData.emails && updateData.emails.length > 0 ? updateData.emails[0].content : updatedBorrower.email,
-      phoneNumber:
-        updateData.phoneNumbers && updateData.phoneNumbers.length > 0
-          ? updateData.phoneNumbers[0].content
-          : updatedBorrower.phoneNumber
+      email: updateData.personalEmail
     };
 
     const borrowerProfileUpdatePayload: Partial<BorrowerProfile> = {
       fullname: updateData.fullname,
       avatar: updateData.avatar,
-      emails: updateData.emails?.map((email) => ({
-        title: email.title,
-        content: email.content
-      })),
-      phoneNumbers: updateData.phoneNumbers?.map((phone) => ({
-        title: phone.title ?? '',
-        content: phone.content
-      })),
+      personalEmail: updateData.personalEmail,
+      workEmail: updateData.workEmail,
       jobTitle: updateData.jobTitle,
       income: updateData.income,
       identifyCardNumber: updateData.identifyCardNumber,

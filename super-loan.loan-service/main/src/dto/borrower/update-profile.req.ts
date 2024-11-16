@@ -11,66 +11,28 @@ import {
   ValidateNested,
   IsEnum,
   IsNumber,
-  IsNotEmpty,
-  IsObject
+  IsNotEmpty
 } from 'class-validator';
-
-class Email {
-  @IsString()
-  @IsNotEmpty({ message: 'Title cannot be empty' })
-  title: string;
-
-  @IsString()
-  @IsNotEmpty({ message: 'Content cannot be empty' })
-  @IsEmail({}, { each: true, message: 'Each email must be a valid email address' })
-  content: string;
-
-  constructor(title: string, content: string) {
-    this.title = title;
-    this.content = content;
-  }
-}
-
-class PhoneNumber {
-  @IsString()
-  @IsOptional()
-  @IsNotEmpty({ message: 'Title cannot be empty' })
-  title?: string;
-
-  @IsString()
-  @IsNotEmpty({ message: 'Content cannot be empty' })
-  @Matches(/^0(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7,8}$/, {
-    each: true,
-    message: 'Each phone number must be a valid Vietnamese number'
-  })
-  content: string;
-
-  constructor(content: string, title?: string) {
-    this.content = content;
-    this.title = title || '';
-  }
-}
 
 export class UpdateProfileReq {
   @IsOptional()
   @IsString()
-  @MaxLength(50, { message: 'Fullname must not exceed 50 characters' })
+  @MaxLength(15, { message: 'Fullname must not exceed 15 characters' })
   @Matches(/^[a-zA-ZÀ-ỹ\s]*$/, { message: 'Fullname must not contain special characters' })
-  fullname?: string;
+  @Matches(/^\S.*\S$|^[\S]$/, { message: 'Fullname must not have leading or trailing spaces' })
+  fullname!: string;
 
   @IsOptional()
   @IsString()
   avatar?: string;
 
   @IsOptional()
-  @IsArray()
-  @IsObject({ each: true })
-  emails?: Email[];
+  @IsEmail()
+  personalEmail!: string;
 
   @IsOptional()
-  @IsArray()
-  @IsObject({ each: true })
-  phoneNumbers?: PhoneNumber[];
+  @IsEmail()
+  workEmail!: string;
 
   @IsOptional()
   @IsString()
@@ -82,6 +44,7 @@ export class UpdateProfileReq {
 
   @IsOptional()
   @IsString()
+  @Matches(/^\d{12}$/, { message: 'Identify card number must be a valid 12-digit number' })
   identifyCardNumber?: string;
 
   @IsOptional()
