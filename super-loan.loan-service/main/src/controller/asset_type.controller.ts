@@ -16,4 +16,40 @@ export class AssetTypeController {
     this.assetTypeService = assetTypeService;
     this.common = common;
   }
+
+  /**
+   * * PUT /asset-type/:id
+   */
+  async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const requestBody = req.body;
+      const id = req.params.id;
+      const result = await this.assetTypeService.findOneAndUpdate({
+        filter: {
+          assetTypeId: id
+        },
+        updateData: requestBody
+      });
+      res.send_ok('Update AssetType successful', result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * * GET /asset-type/:id
+   */
+  async findOne(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const id = req.params.id;
+      const result = await this.assetTypeService.findOne({
+        filter: {
+          assetTypeId: id
+        }
+      });
+      res.send_ok('Get AssetType successful', result);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

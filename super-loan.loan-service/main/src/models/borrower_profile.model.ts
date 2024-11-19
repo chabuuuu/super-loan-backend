@@ -25,11 +25,11 @@ export class BorrowerProfile extends BaseModel {
   avatar?: string;
 
   // @Index({ unique: true })
-  @Column('json')
+  @Column('json', { nullable: true })
   emails!: { title: string; content: string }[];
 
   // @Index({ unique: true })
-  @Column('json', { name: 'phone_number' })
+  @Column('json', { name: 'phone_number', nullable: true })
   phoneNumbers!: { title: string; content: string }[];
 
   @Column('varchar', { length: 100, name: 'job_tittle', nullable: true })
