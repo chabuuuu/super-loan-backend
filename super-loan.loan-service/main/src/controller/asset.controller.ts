@@ -16,4 +16,33 @@ export class AssetController {
     this.assetService = assetService;
     this.common = common;
   }
+  async findOne(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const id = req.params.id;
+      const result = await this.assetService.findOne({
+        filter: {
+          assetId: id
+        }
+      });
+      res.send_ok('Get Asset successful', result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const requestBody = req.body;
+      const id = req.params.id;
+      const result = await this.assetService.findOneAndUpdate({
+        filter: {
+          assetId: id
+        },
+        updateData: requestBody
+      });
+      res.send_ok('Update Asset successful', result);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

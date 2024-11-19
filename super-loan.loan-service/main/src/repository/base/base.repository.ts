@@ -37,12 +37,25 @@ export class BaseRepository<T extends ObjectLiteral> implements IBaseRepository<
     await this.ormRepository.save(recordToDelete);
   }
 
+  async getPrimaryColumnName() {
+    // Lấy metadata của entity TaiSan
+    // Tìm các cột có primary key
+    const primaryColumns = this.ormRepository.metadata.primaryColumns;
+
+    // Lấy tên của cột primary
+    const primaryColumnNames = primaryColumns.map((column) => column.propertyName);
+
+    return primaryColumnNames; // Trả về danh sách tên các cột primary
+  }
+
   async findOneAndUpdate(options: { filter: Partial<T>; updateData: Partial<T> }): Promise<void> {
     const { filter, updateData } = options;
 
     if (filter && !filter.deleteAt) {
       (filter as any).deleteAt = IsNull();
     }
+
+    console.log('primary', this.getPrimaryColumnName());
 
     const recordToUpdate = await this.ormRepository.findOne({
       where: filter
@@ -53,6 +66,8 @@ export class BaseRepository<T extends ObjectLiteral> implements IBaseRepository<
     }
 
     const primaryKey = await this.ormRepository.getId(recordToUpdate);
+
+    console.log('primaryKey', primaryKey);
 
     await this.ormRepository.update(primaryKey, updateData);
   }

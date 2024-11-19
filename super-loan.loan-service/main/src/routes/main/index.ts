@@ -26,7 +26,7 @@ import BaseError from '@/utils/error/base.error';
 
 export function route(app: any) {
   app.use('/appraisal', appraisalRouter);
-  app.use('/asset_type', assetTypeRouter);
+  app.use('/asset-type', assetTypeRouter);
   app.use('/asset', assetRouter);
   app.use('/borrower', borrowerRouter);
   app.use('/contract', contractRouter);
