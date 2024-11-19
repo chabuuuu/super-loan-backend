@@ -11,10 +11,13 @@ export class UpdateProfileRes {
   avatar?: string;
 
   @Expose()
-  emails!: string[];
+  personalEmail!: string;
 
   @Expose()
-  phoneNumbers!: string[];
+  workEmail!: string;
+
+  @Expose()
+  phoneNumber!: string;
 
   @Expose()
   jobTitle?: string;
