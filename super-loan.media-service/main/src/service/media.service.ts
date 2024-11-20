@@ -8,6 +8,7 @@ import minioClient from '@/utils/minio-instance.util';
 import { MediaUploadRes } from '@/dto/media-upload.res';
 import { GlobalConfig } from '@/utils/config/global-config.util';
 import { GetMediaUrlRes } from '@/dto/get-image-url.res';
+import ffmpeg from 'fluent-ffmpeg';
 
 @injectable()
 export class MediaService implements IMediaService {
@@ -89,8 +90,19 @@ export class MediaService implements IMediaService {
     };
   }
 
-  async getImageUrl(mediaCategory: string): Promise<GetMediaUrlRes> {
+  async getImageUrl(mediaCategory: string, width?: number, height?: number): Promise<GetMediaUrlRes> {
     const fileName = uuidv4();
+    const filePath = `/tmp/${fileName}`;
+
+    const stream = ffmpeg().input(filePath).format('jpeg').videoCodec('mjpeg');
+
+    if (width && height) {
+      stream.size(`${width}x${height}`);
+    } else if (width) {
+      stream.outputOptions(`-vf scale=${width}:-1`);
+    } else if (height) {
+      stream.outputOptions(`-vf scale=-1:${height}`);
+    }
     return {
       mediaUrl: `http://${this.minioEndpoint}/media/${this.bucketName}/${mediaCategory}/${fileName}`,
       fileName: fileName

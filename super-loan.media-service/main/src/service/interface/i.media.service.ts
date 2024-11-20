@@ -5,5 +5,5 @@ export interface IMediaService {
   getVideoUrl(mediaCategory: string): Promise<GetMediaUrlRes>;
   uploadVideo(fileName: string, tempFilePath: string, mediaCategory: string): Promise<MediaUploadRes>;
   uploadImage(fileName: string, tempFilePath: string, mediaCategory: string): Promise<MediaUploadRes>;
-  getImageUrl(mediaCategory: string): Promise<GetMediaUrlRes>;
+  getImageUrl(mediaCategory: string, width?: number, height?: number): Promise<GetMediaUrlRes>;
 }

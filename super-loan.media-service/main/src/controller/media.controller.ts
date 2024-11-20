@@ -15,14 +15,22 @@ export class MediaController {
   async getImageUrl(req: Request, res: Response, next: NextFunction) {
     try {
       const mediaCategory = req.query.mediaCategory?.toString();
+      const width = req.query.width ? parseInt(req.query.width as string, 10) : undefined;
+      const height = req.query.height ? parseInt(req.query.height as string, 10) : undefined;
 
       if (!mediaCategory) {
-        return res.send_badRequest('No bucket name provided.');
+        return res.send_badRequest('No media category provided.');
       }
-      const result = await this.mediaService.getImageUrl(mediaCategory);
-      res.send_ok('Get image url successfully', result);
+
+      if ((width && isNaN(width)) || (height && isNaN(height))) {
+        return res.send_badRequest('Invalid width or height parameter.');
+      }
+
+      const result = await this.mediaService.getImageUrl(mediaCategory, width, height);
+
+      res.send_ok('Get resized image URL successfully', result);
     } catch (error) {
-      throw new BaseError('UNKNOW', 'Get video url failed');
+      next(new BaseError('UNKNOWN', 'Get image URL failed'));
     }
   }
 
