@@ -2,7 +2,8 @@
   "server": {
     "port": 3000,
     "host": "localhost",
-    "api_version": "/api/v1"
+    "api_version": "/api/v1",
+    "url": "http://localhost:3000"
   },
   "request_limit": {
     "limit": "100kb"
