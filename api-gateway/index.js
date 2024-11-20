@@ -10,11 +10,16 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 //Route
-app.use("/api/v1/loan-service", proxy("http://localhost:5000"));
+app.use("/api/v1/loan-service", proxy("http://localhost:7000"));
 app.use("/api/v1/payment-service", proxy("http://localhost:5001"));
 app.use("/api/v1/report-service", proxy("http://localhost:5002"));
 app.use("/api/v1/chat-service", proxy("http://localhost:5003"));
-app.use("/api/v1/media-service", proxy("http://localhost:5004"));
+app.use(
+  "/api/v1/media-service",
+  proxy("http://localhost:5004", {
+    parseReqBody: false, // Tắt parse body để giữ nguyên định dạng multipart/form-data
+  })
+);
 
 app.listen(9005, () => {
   console.log("Gateway is running on port 9005");
