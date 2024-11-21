@@ -18,6 +18,8 @@ export const globalErrorHanlder = (error: any, req: Request, res: Response, next
     switch (error.code) {
       case ErrorCode.VALIDATION_ERROR:
         return res.send_badRequest('Validation Error', error);
+      case ErrorCode.MEDIA_NOT_FOUND:
+        return res.send_notFound('Media Not Found', error.message);
     }
   }
 

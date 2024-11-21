@@ -13,6 +13,7 @@ export class GlobalConfig {
     port: number;
     host: string;
     api_version: string;
+    url: string;
   } = config.get('server');
 
   /**

@@ -9,15 +9,47 @@ import { MediaUploadRes } from '@/dto/media-upload.res';
 import { GlobalConfig } from '@/utils/config/global-config.util';
 import { GetMediaUrlRes } from '@/dto/get-image-url.res';
 import ffmpeg from 'fluent-ffmpeg';
+import { ErrorCode } from '@/enums/error-code.enums';
+import { GetMediaDto } from '@/dto/get-media.dto';
 
 @injectable()
 export class MediaService implements IMediaService {
   private mediaRepository: IMediaRepository;
   private bucketName = 'superloan';
   private minioEndpoint = process.env.MINIO_ENDPOINT || '';
+  private serverUrl = GlobalConfig.server.url || '';
 
   constructor(@inject('MediaRepository') mediaRepository: IMediaRepository) {
     this.mediaRepository = mediaRepository;
+  }
+  /**
+   * * Get media by id
+   * @param id
+   */
+  async get(fileName: string, mediaCategory?: string): Promise<GetMediaDto> {
+    try {
+      // Lấy metadata để xác định loại file
+      const metadata = await minioClient.statObject(
+        this.bucketName,
+        mediaCategory ? mediaCategory + '/' + fileName : fileName
+      );
+
+      const media = await minioClient.getObject(
+        this.bucketName,
+        mediaCategory ? mediaCategory + '/' + fileName : fileName
+      );
+
+      return {
+        mediaStream: media,
+        metadata: metadata
+      };
+    } catch (error: any) {
+      if (error.code === 'NoSuchKey') {
+        throw new BaseError(ErrorCode.MEDIA_NOT_FOUND, 'Media not found');
+      } else {
+        throw error;
+      }
+    }
   }
 
   async uploadImage(fileName: string, tempFilePath: string, mediaCategory: string): Promise<MediaUploadRes> {
@@ -47,14 +79,14 @@ export class MediaService implements IMediaService {
     });
 
     return {
-      mediaUrl: `http://${this.minioEndpoint}/media/${this.bucketName}/${mediaCategory}/${fileName}`
+      mediaUrl: `${this.serverUrl}/media?mediaCategory=${mediaCategory}&fileName=${fileName}`
     };
   }
 
   async getVideoUrl(mediaCategory: string): Promise<GetMediaUrlRes> {
     const fileName = uuidv4();
     return {
-      mediaUrl: `http://${this.minioEndpoint}/media/${this.bucketName}/${mediaCategory}/${fileName}`,
+      mediaUrl: `${this.serverUrl}/media?mediaCategory=${mediaCategory}&fileName=${fileName}`,
       fileName: fileName
     };
   }
@@ -86,25 +118,14 @@ export class MediaService implements IMediaService {
     });
 
     return {
-      mediaUrl: `http://${this.minioEndpoint}/media/${this.bucketName}/${mediaCategory}/${fileName}`
+      mediaUrl: `${this.serverUrl}/media?mediaCategory=${mediaCategory}&fileName=${fileName}`
     };
   }
 
-  async getImageUrl(mediaCategory: string, width?: number, height?: number): Promise<GetMediaUrlRes> {
+  async getImageUrl(mediaCategory: string): Promise<GetMediaUrlRes> {
     const fileName = uuidv4();
-    const filePath = `/tmp/${fileName}`;
-
-    const stream = ffmpeg().input(filePath).format('jpeg').videoCodec('mjpeg');
-
-    if (width && height) {
-      stream.size(`${width}x${height}`);
-    } else if (width) {
-      stream.outputOptions(`-vf scale=${width}:-1`);
-    } else if (height) {
-      stream.outputOptions(`-vf scale=-1:${height}`);
-    }
     return {
-      mediaUrl: `http://${this.minioEndpoint}/media/${this.bucketName}/${mediaCategory}/${fileName}`,
+      mediaUrl: `${this.serverUrl}/media?mediaCategory=${mediaCategory}&fileName=${fileName}`,
       fileName: fileName
     };
   }
