@@ -8,7 +8,7 @@
     "allowedHeaders": ["X-Requested-With", "X-HTTP-Method-Override", "Content-Type", "Accept", "Observe"]
   },
   "helmet": {
-    "enable": true
+    "enable": false
   },
   "enviroment": "development",
   "database": {
