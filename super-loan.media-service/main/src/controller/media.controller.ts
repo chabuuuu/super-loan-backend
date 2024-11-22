@@ -39,8 +39,6 @@ export class MediaController {
       console.log('contentType', contentType);
 
       res.setHeader('Content-Type', contentType);
-      res.setHeader('Cross-Origin-Opener-Policy', 'cross-origin');
-      res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
 
       mediaDto.mediaStream.pipe(res);
     } catch (error) {

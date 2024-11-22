@@ -20,7 +20,9 @@
       "Authorization"
     ]
   },
-  "helmet": false,
+  "helmet": {
+    "enable": false
+  },
   "enviroment": "default",
   "morgan": {
     "format": "dev"

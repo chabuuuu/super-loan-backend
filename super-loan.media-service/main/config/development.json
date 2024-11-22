@@ -5,15 +5,11 @@
   "cors": {
     "origin": "*",
     "methods": ["GET", "POST", "PUT", "DELETE", "UPDATE"],
-    "allowedHeaders": [
-      "X-Requested-With",
-      "X-HTTP-Method-Override",
-      "Content-Type",
-      "Accept",
-      "Observe"
-    ]
+    "allowedHeaders": ["X-Requested-With", "X-HTTP-Method-Override", "Content-Type", "Accept", "Observe"]
   },
-  "helmet": false,
+  "helmet": {
+    "enable": true
+  },
   "enviroment": "development",
   "database": {
     "sync": false
