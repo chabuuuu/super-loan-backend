@@ -18,6 +18,7 @@ const app = express();
 /**
  * Middlewares
  */
+// app.use(helmet());
 app.use(
   express.urlencoded({
     extended: true
@@ -27,7 +28,12 @@ app.use(express.json());
 app.use(morgan(GlobalConfig.morgan.format || 'dev'));
 app.use(cors(GlobalConfig.cors));
 if (GlobalConfig.helmet.enable) {
-  app.use(helmet());
+  app.use(
+    helmet({
+      crossOriginOpenerPolicy: false,
+      crossOriginResourcePolicy: false
+    })
+  );
 }
 app.use(responseFormater);
 
