@@ -8,8 +8,8 @@ import minioClient from '@/utils/minio-instance.util';
 import { MediaUploadRes } from '@/dto/media-upload.res';
 import { GlobalConfig } from '@/utils/config/global-config.util';
 import { GetMediaUrlRes } from '@/dto/get-image-url.res';
+import ffmpeg from 'fluent-ffmpeg';
 import { ErrorCode } from '@/enums/error-code.enums';
-import { Readable } from 'stream';
 import { GetMediaDto } from '@/dto/get-media.dto';
 
 @injectable()
