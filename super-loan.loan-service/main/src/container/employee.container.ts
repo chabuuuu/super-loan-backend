@@ -17,10 +17,11 @@ class EmployeeContainer extends BaseContainer {
   export() {
     const employeeController = this.container.get<EmployeeController>(EmployeeController);
     const employeeService = this.container.get<IEmployeeService<any>>('EmployeeService');
-    return { employeeController, employeeService };
+    const employeeRepostitory = this.container.get<IEmployeeRepository<any>>('EmployeeRepository');
+    return { employeeController, employeeService, employeeRepostitory };
   }
 }
 
 const employeeContainer = new EmployeeContainer();
-const { employeeController, employeeService } = employeeContainer.export();
-export { employeeController, employeeService };
+const { employeeController, employeeService, employeeRepostitory } = employeeContainer.export();
+export { employeeController, employeeService, employeeRepostitory };

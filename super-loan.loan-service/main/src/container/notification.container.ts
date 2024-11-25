@@ -5,6 +5,8 @@ import { NotificationRepository } from '@/repository/notification.repository';
 import { INotificationService } from '@/service/interface/i.notification.service';
 import { INotificationRepository } from '@/repository/interface/i.notification.repository';
 import { BaseContainer } from '@/container/base.container';
+import { IEmployeeRepository } from '@/repository/interface/i.employee.repository';
+import { employeeRepostitory } from '@/container/employee.container';
 
 class NotificationContainer extends BaseContainer {
   constructor() {
@@ -12,6 +14,9 @@ class NotificationContainer extends BaseContainer {
     this.container.bind<INotificationService<Notification>>('NotificationService').to(NotificationService);
     this.container.bind<INotificationRepository<Notification>>('NotificationRepository').to(NotificationRepository);
     this.container.bind<NotificationController>(NotificationController).toSelf();
+
+    //Import
+    this.container.bind<IEmployeeRepository<any>>('EmployeeRepository').toConstantValue(employeeRepostitory);
   }
 
   export() {

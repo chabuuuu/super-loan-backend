@@ -122,6 +122,10 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
       subject: 'Chúc mừng đăng ký tài khoản thành công',
       text: emailContent
     });
+
+    //Send notification register success
+    this.notificationService.sendWhenRegisterBorrowerSuccess(data.fullname);
+
     return convertToDto(RegisterBorrowerRes, result);
   }
   async login(data: LoginBorrowerReq, clientInfo: ClientInfoDto): Promise<LoginBorrowerRes> {
@@ -170,17 +174,7 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     result.token = token;
 
     //Send notification login success
-    const notifcationContent = `Trên ${clientInfo.os} - ${clientInfo.city} -> ${clientInfo.device} - ${clientInfo.timezone}`;
-
-    this.notificationService.sendNotification(
-      NotificationType.NOTIFY_LOGIN,
-      'Bạn đã đăng nhập thành công',
-      notifcationContent,
-      {
-        id: borrower.borrowerId,
-        type: UserTypeEnum.BORROWER
-      }
-    );
+    this.notificationService.sendWhenLoggedIn(clientInfo, UserTypeEnum.BORROWER, borrower.borrowerId);
 
     return result;
   }
