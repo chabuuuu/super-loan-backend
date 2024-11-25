@@ -1,5 +1,7 @@
 FROM node:21-alpine3.19
 
+RUN apk add --no-cache ffmpeg
+
 RUN mkdir -p /opt/app
 
 WORKDIR /opt/app

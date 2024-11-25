@@ -17,13 +17,13 @@ export class VersionLoanPackage extends BaseModel {
   @Column('varchar', { length: 255, name: 'loan_package_name' })
   loanPackageName!: string;
 
-  @Column('decimal', { precision: 5, scale: 2, name: 'interest_rate' })
+  @Column('float', { name: 'interest_rate' })
   interestRate!: number;
 
   @Column('varchar', { length: 50, name: 'loan_type' })
   loanType!: string;
 
-  @Column('decimal', { precision: 15, scale: 2, name: 'limit_amount' })
+  @Column('float', { name: 'limit_amount' })
   limitAmount!: number;
 
   @Column('int', { name: 'loan_term_limit' })

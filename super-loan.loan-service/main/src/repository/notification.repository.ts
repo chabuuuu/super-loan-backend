@@ -13,4 +13,18 @@ export class NotificationRepository
   constructor(@inject(ITYPES.Datasource) dataSource: DataSource) {
     super(dataSource.getRepository(Notification));
   }
+
+  async findByReceiverIdAndReceiverTypeAndSeen(
+    receiverId: string,
+    receiverType: string,
+    seen?: boolean
+  ): Promise<Notification[]> {
+    const notifications = await this.ormRepository
+      .createQueryBuilder('notifications')
+      .where('notifications.receivers @> :receiver', { receiver: JSON.stringify([{ receiverId, receiverType, seen }]) })
+      .orderBy('notifications.create_at', 'DESC')
+      .getMany();
+
+    return notifications;
+  }
 }

@@ -1,25 +1,30 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, PrimaryColumn } from 'typeorm';
 import { BaseModel } from './base.model';
 import { VersionLoanPackage } from './version_loan_package.model';
 import { LoanRequest } from './loan_request.model';
 import { Contract } from './contract.model';
 import { TrackingContractInformation } from './tracking_contract_information.model';
 
+export enum LoanType {
+  UNSECURED_LOAN = 'UNSECURED_LOAN',
+  MORTGAGE_LOAN = 'MORTGAGE_LOAN'
+}
+
 @Entity('loan_packages')
 export class LoanPackage extends BaseModel {
-  @PrimaryGeneratedColumn('uuid', { name: 'loan_package_id' })
+  @PrimaryColumn({ name: 'loan_package_id' })
   loanPackageId!: string;
 
   @Column('varchar', { length: 255, name: 'loan_package_name' })
   loanPackageName!: string;
 
-  @Column('decimal', { precision: 5, scale: 2, name: 'interest_rate' })
+  @Column('float', { name: 'interest_rate' })
   interestRate!: number;
 
-  @Column('varchar', { length: 50, name: 'loan_type' })
+  @Column({ type: 'enum', enum: LoanType, name: 'loan_type' })
   loanType!: string;
 
-  @Column('decimal', { precision: 15, scale: 2, name: 'limit_amount' })
+  @Column('float', { name: 'limit_amount' })
   limitAmount!: number;
 
   @Column('int', { name: 'loan_term_limit' })
@@ -34,8 +39,8 @@ export class LoanPackage extends BaseModel {
   @Column('text', { nullable: true })
   description!: string;
 
-  @OneToMany(() => VersionLoanPackage, (version_loan_package) => version_loan_package.loanPackage)
-  versionLoanPackages!: Promise<VersionLoanPackage[]>;
+  @OneToMany(() => VersionLoanPackage, (version_loan_package) => version_loan_package.loanPackage, { cascade: true })
+  versionLoanPackages!: VersionLoanPackage[];
 
   @OneToMany(() => LoanRequest, (loan_request) => loan_request.loanPackage)
   loanRequests!: Promise<LoanRequest[]>;
