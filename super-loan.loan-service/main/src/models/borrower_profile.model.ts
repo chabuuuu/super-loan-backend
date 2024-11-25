@@ -36,7 +36,6 @@ export class BorrowerProfile extends BaseModel {
   @Column('varchar', { nullable: true, length: 15, name: 'phone_number' })
   phoneNumber!: string;
 
-
   @Column('varchar', { length: 100, name: 'job_tittle', nullable: true })
   jobTitle?: string;
 
