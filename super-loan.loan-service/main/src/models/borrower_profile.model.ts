@@ -25,7 +25,6 @@ export class BorrowerProfile extends BaseModel {
   avatar?: string;
 
   // @Index({ unique: true })
-
   @Column('varchar', { nullable: true, length: 100, name: 'personal_email' })
   personalEmail!: string;
 
