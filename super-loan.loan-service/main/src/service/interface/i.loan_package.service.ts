@@ -5,4 +5,6 @@ import { BaseModelType } from '@/types/base-model.types';
 
 export interface ILoanPackageService<T extends BaseModelType> extends IBaseCrudService<T> {
   createPackage(data: CreateLoanPackageReq): Promise<CreateLoanPackageRes>;
+  getDetail(id: string): Promise<CreateLoanPackageRes>;
+  getAll(page: number, rpp: number): Promise<CreateLoanPackageRes[]>;
 }
