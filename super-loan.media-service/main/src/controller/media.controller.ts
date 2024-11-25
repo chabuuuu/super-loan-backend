@@ -71,13 +71,10 @@ export class MediaController {
     const args: string[] = [];
 
     if (width && !height) {
-      // Maintain aspect ratio, ensure width >= minWidth
       args.push('-vf', `scale=${Math.max(width, minWidth)}:-2`);
     } else if (!width && height) {
-      // Maintain aspect ratio, ensure height >= minHeight
       args.push('-vf', `scale=-2:${Math.max(height, minHeight)}`);
     } else if (width && height) {
-      // Ensure both dimensions are above minimum
       const finalWidth = Math.max(width, minWidth);
       const finalHeight = Math.max(height, minHeight);
       args.push('-vf', `scale=${finalWidth}:${finalHeight}`);
