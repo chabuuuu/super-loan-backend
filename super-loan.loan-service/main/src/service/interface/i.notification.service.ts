@@ -3,12 +3,15 @@ import { UserTypeEnum } from '@/enums/user-type.enum';
 import { Borrower } from '@/models/borrower.model';
 import { IBaseCrudService } from '@/service/interface/i.base.service';
 import { BaseModelType } from '@/types/base-model.types';
+import { ParsedQs } from 'qs';
 
 export interface INotificationService<T extends BaseModelType> extends IBaseCrudService<T> {
+  getMyNotification(id: string, roleId: string, seen: string): Promise<T[]>;
+
   sendNotification(
     type: string,
     title: string,
-    receiver: { id: string; type: string },
+    receiver: { id: string; type: string }[],
     content?: string
   ): Promise<void>;
 

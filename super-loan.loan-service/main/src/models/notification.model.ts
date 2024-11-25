@@ -10,17 +10,8 @@ export class Notification extends BaseModel {
   @Column({ name: 'propose_id', nullable: true })
   proposeId?: string;
 
-  // @Column('json', { name: 'object_receive_notice', nullable: false })
-  // objectReceiveNotice!: { receiver_id: string; seen: boolean; receiver_type: string };
-
-  @Column({ name: 'receiver_id', nullable: false })
-  receiverId!: string;
-
-  @Column({ name: 'seen', default: false })
-  seen!: boolean;
-
-  @Column({ name: 'receiver_type' })
-  receiverType!: string;
+  @Column({ name: 'receivers', type: 'jsonb', nullable: true })
+  receivers?: { receiverId: string; seen: boolean; receiverType: string }[];
 
   @ManyToOne(() => Employee, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'subject_send_notice' })

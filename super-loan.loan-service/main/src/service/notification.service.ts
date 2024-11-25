@@ -9,7 +9,7 @@ import { IEmployeeRepository } from '@/repository/interface/i.employee.repositor
 import { INotificationRepository } from '@/repository/interface/i.notification.repository';
 import { BaseCrudService } from '@/service/base/base.service';
 import { INotificationService } from '@/service/interface/i.notification.service';
-import { inject, injectable } from 'inversify';
+import { id, inject, injectable } from 'inversify';
 
 @injectable()
 export class NotificationService extends BaseCrudService<Notification> implements INotificationService<Notification> {
@@ -25,6 +25,20 @@ export class NotificationService extends BaseCrudService<Notification> implement
     this.employeeRepository = employeeRepository;
   }
 
+  async getMyNotification(id: string, roleId: string, seen: string): Promise<Notification[]> {
+    switch (seen) {
+      case 'true':
+        return this.notificationRepository.findByReceiverIdAndReceiverTypeAndSeen(id, roleId, true);
+      case 'false':
+        return this.notificationRepository.findByReceiverIdAndReceiverTypeAndSeen(id, roleId, false);
+      case 'all':
+        return this.notificationRepository.findByReceiverIdAndReceiverTypeAndSeen(id, roleId);
+
+      default:
+        return [];
+    }
+  }
+
   async sendWhenRegisterBorrowerSuccess(borrowerName: string): Promise<void> {
     const notifcationContent = `Khách hàng ${borrowerName}`;
 
@@ -34,24 +48,26 @@ export class NotificationService extends BaseCrudService<Notification> implement
       }
     });
 
-    for (const admin of admins) {
-      this.sendNotification(
-        NotificationType.NOTIFY_REGISTER_BORROWER,
-        'Đăng ký thành công',
-        {
-          id: admin.employeeId,
-          type: UserTypeEnum.EMPLOYEE
-        },
-        notifcationContent
-      );
-    }
+    const receivers = admins.map((admin) => ({
+      id: admin.employeeId,
+      type: UserTypeEnum.EMPLOYEE
+    }));
+
+    this.sendNotification(
+      NotificationType.NOTIFY_REGISTER_BORROWER,
+      'Đăng ký thành công',
+      receivers,
+      notifcationContent
+    );
   }
 
   async sendWhenChangePasswordSuccess(userType: UserTypeEnum, userId: string): Promise<void> {
-    this.sendNotification(NotificationType.NOTIFY_CHANGE_PASSWORD, 'Đổi mật khẩu thành công', {
-      id: userId,
-      type: userType
-    });
+    this.sendNotification(NotificationType.NOTIFY_CHANGE_PASSWORD, 'Đổi mật khẩu thành công', [
+      {
+        id: userId,
+        type: userType
+      }
+    ]);
   }
 
   async sendWhenLoggedIn(clientInfo: ClientInfoDto, userType: UserTypeEnum, userId: string): Promise<void> {
@@ -60,10 +76,12 @@ export class NotificationService extends BaseCrudService<Notification> implement
     this.sendNotification(
       NotificationType.NOTIFY_LOGIN,
       'Bạn đã đăng nhập thành công',
-      {
-        id: userId,
-        type: userType
-      },
+      [
+        {
+          id: userId,
+          type: userType
+        }
+      ],
       notifcationContent
     );
   }
@@ -71,15 +89,20 @@ export class NotificationService extends BaseCrudService<Notification> implement
   async sendNotification(
     type: string,
     title: string,
-    receiver: { id: string; type: string },
+    receiver: { id: string; type: string }[],
     content?: string
   ): Promise<void> {
     const notification = new Notification();
     notification.titleName = title;
     notification.content = content;
     notification.notiType = type;
-    notification.receiverId = receiver.id;
-    notification.receiverType = receiver.type;
+
+    notification.receivers = receiver.map((receiver) => ({
+      receiverId: receiver.id,
+      receiverType: receiver.type,
+      seen: false
+    }));
+
     await this.notificationRepository.create({ data: notification });
   }
 }
