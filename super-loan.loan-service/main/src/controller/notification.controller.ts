@@ -6,6 +6,7 @@ import { ITYPES } from '@/types/interface.types';
 import BaseError from '@/utils/error/base.error';
 import { NextFunction, Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
+import { In } from 'typeorm';
 
 @injectable()
 export class NotificationController {
@@ -26,17 +27,18 @@ export class NotificationController {
     try {
       const user = req.user;
 
+      if (!req.query.seen) {
+        throw new BaseError(ErrorCode.BAD_REQUEST, 'Seen is required');
+      }
+
+      const seen = req.query.seen.toString();
+
       if (!user) {
         throw new BaseError(ErrorCode.AUTH_01, 'User not login');
       }
 
-      const result = await this.notificationService.findMany({
-        filter: {
-          receiverId: user.id,
-          receiverType: user.roleId
-        },
-        order: [{ column: 'createAt', direction: 'DESC' }]
-      });
+      const result = await this.notificationService.getMyNotification(user.id, user.roleId, seen);
+
       res.send_ok('Get my notification successful', result);
     } catch (error) {
       next(error);
