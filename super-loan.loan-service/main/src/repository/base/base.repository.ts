@@ -105,7 +105,7 @@ export class BaseRepository<T extends ObjectLiteral> implements IBaseRepository<
     let skip = undefined;
     let take = undefined;
     if (paging) {
-      skip = (paging.page - 1) * paging.page;
+      skip = (paging.page - 1) * paging.rpp;
       take = paging.rpp;
     }
 
