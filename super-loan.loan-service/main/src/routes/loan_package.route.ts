@@ -5,7 +5,7 @@ import express from 'express';
 const loanPackageRouter = express.Router();
 loanPackageRouter
   .post('/create', classValidate(CreateLoanPackageReq), loanPackageController.createPackage.bind(loanPackageController))
-  .get('/get-all')
-  .get('/get-detail');
+  .get('/get-list', loanPackageController.getAll.bind(loanPackageController))
+  .get('/get-detail/:id', loanPackageController.getLoanPackageDetail.bind(loanPackageController));
 
 export default loanPackageRouter;

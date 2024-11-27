@@ -30,7 +30,26 @@ export class LoanPackageController {
     }
   }
 
-  async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {}
+  async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const page = Number(req.query.page) || 1;
+      const rpp = Number(req.query.rpp) || 10;
 
-  async getDetail(req: Request, res: Response, next: NextFunction): Promise<void> {}
+      const loanPackages = await this.loanPackageService.getAll(page, rpp);
+
+      res.json({ message: 'Success', data: loanPackages });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getLoanPackageDetail(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = req.params.id;
+      const loanPackage = await this.loanPackageService.getDetail(id);
+      res.json({ data: loanPackage });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

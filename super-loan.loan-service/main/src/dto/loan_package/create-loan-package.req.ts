@@ -19,10 +19,6 @@ export enum LoanType {
 export class CreateLoanPackageReq {
   @IsNotEmpty()
   @IsString()
-  loanPackageId!: string;
-
-  @IsNotEmpty()
-  @IsString()
   @MaxLength(100, { message: 'Loan package name must not exceed 100 characters' })
   @Matches(/^[a-zA-ZÀ-ỹ0-9\s]*$/, {
     message: 'Loan package name must not contain special characters'
