@@ -31,6 +31,9 @@ export const globalErrorHanlder = (error: any, req: Request, res: Response, next
     if (error.code === ErrorCode.AUTH_01) {
       return res.send_unauthorized('Unauthorized', error);
     }
+    if (error.code === ErrorCode.AUTH_02) {
+      return res.send_unauthorized('Unauthorized', error);
+    }
     if (error.code === ErrorCode.BAD_REQUEST) {
       return res.send_badRequest('Bad Request', error);
     }
