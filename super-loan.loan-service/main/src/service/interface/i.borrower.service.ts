@@ -12,8 +12,12 @@ import { BorrowerProfile } from '@/models/borrower_profile.model';
 import { ClientInfoDto } from '@/dto/client-info.dto';
 import { IBaseCrudService } from '@/service/interface/i.base.service';
 import { BaseModelType } from '@/types/base-model.types';
+import { PagingDto } from '@/dto/paging.dto';
+import { PagingResponseDto } from '@/dto/paging-response.dto';
+import { GetAllBorrowerRes } from '@/dto/borrower/get-all-borrower.res';
 
 export interface IBorrowerService<T extends BaseModelType> extends IBaseCrudService<T> {
+  getAll(paging: PagingDto): Promise<PagingResponseDto<GetAllBorrowerRes>>;
   login(requestBody: LoginBorrowerReq, clientInfo: ClientInfoDto): Promise<LoginBorrowerRes>;
   register(data: RegisterBorrowerReq): Promise<RegisterBorrowerRes>;
   forgotPassword(requestBody: ForgotPasswordReq): Promise<void>;

@@ -12,6 +12,7 @@ import { UpdateProfileRes } from '@/dto/borrower/update-profile.res';
 import { VerifyOtpReq } from '@/dto/borrower/verify-otp-borrower.req';
 import { VerifyOtpRes } from '@/dto/borrower/verify-otp-borrower.res';
 import { ClientInfoDto } from '@/dto/client-info.dto';
+import { PagingDto } from '@/dto/paging.dto';
 
 import { Borrower } from '@/models/borrower.model';
 import { BorrowerProfile } from '@/models/borrower_profile.model';
@@ -121,6 +122,21 @@ export class BorrowerController {
       const responseBody = convertToDto(UpdateProfileRes, updatedProfile);
 
       res.send_ok('Profile updated successfully', responseBody);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const page = Number(req.query.page) || 1;
+      const rpp = Number(req.query.rpp) || 10;
+
+      const paging = new PagingDto(page, rpp);
+
+      const borrowers = await this.borrowerService.getAll(paging);
+
+      res.send_ok('Get all borrowers success', borrowers);
     } catch (error) {
       next(error);
     }
