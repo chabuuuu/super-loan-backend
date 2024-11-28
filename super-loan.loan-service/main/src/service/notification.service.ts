@@ -60,6 +60,10 @@ export class NotificationService extends BaseCrudService<Notification> implement
     }
 
     //If seenAll is false, set seen = true for notification that have notificationId in notificationIds
+    if (!seenNotificationReq.notificationIds) {
+      return;
+    }
+
     for (const notificationId of seenNotificationReq.notificationIds) {
       //Find notification by notificationId
       const notification = await this.notificationRepository.findOne({
