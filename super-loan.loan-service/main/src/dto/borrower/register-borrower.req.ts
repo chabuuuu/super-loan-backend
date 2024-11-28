@@ -15,7 +15,7 @@ import {
 export class RegisterBorrowerReq {
   @IsNotEmpty()
   @IsString()
-  @MaxLength(15, { message: 'Fullname must not exceed 15 characters' })
+  @MaxLength(30, { message: 'Fullname must not exceed 30 characters' })
   @Matches(/^[a-zA-ZÀ-ỹ\s]*$/, { message: 'Fullname must not contain special characters' })
   @Matches(/^\S.*\S$|^[\S]$/, { message: 'Fullname must not have leading or trailing spaces' })
   fullname!: string;
