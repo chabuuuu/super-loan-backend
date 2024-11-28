@@ -1,5 +1,6 @@
 import { CreateLoanPackageReq } from '@/dto/loan_package/create-loan-package.req';
 import { CreateLoanPackageRes } from '@/dto/loan_package/create-loanpackage.res';
+import { PagingResponseDto } from '@/dto/paging-response.dto';
 import { PagingDto } from '@/dto/paging.dto';
 import { LoanPackage } from '@/models/loan_package.model';
 import { VersionLoanPackage } from '@/models/version_loan_package.model';
@@ -9,6 +10,7 @@ import { ILoanPackageService } from '@/service/interface/i.loan_package.service'
 import { convertToDto } from '@/utils/dto-convert/convert-to-dto.util';
 import BaseError from '@/utils/error/base.error';
 import { inject, injectable } from 'inversify';
+import { IsNull } from 'typeorm';
 
 @injectable()
 export class LoanPackageService extends BaseCrudService<LoanPackage> implements ILoanPackageService<LoanPackage> {
@@ -40,15 +42,30 @@ export class LoanPackageService extends BaseCrudService<LoanPackage> implements 
     return convertToDto(CreateLoanPackageRes, loanPackage);
   }
 
-  async getAll(page: number, rpp: number): Promise<CreateLoanPackageRes[]> {
+  private prepareFilter(): Partial<LoanPackage> {
+    const filter: Partial<LoanPackage> = {};
+
+    if (!('deleteAt' in filter)) {
+      Object.assign(filter, { deleteAt: IsNull() });
+    }
+
+    return filter;
+  }
+
+  async getAll(page: number, rpp: number): Promise<PagingResponseDto<CreateLoanPackageRes>> {
     const paging = new PagingDto(page, rpp);
+    const filter = this.prepareFilter();
+
+    const totalItems = await this.loanPackageRepository.count({ filter });
 
     const loanPackages = await this.loanPackageRepository.findMany({
+      filter: filter,
       paging: paging,
       order: [{ column: 'createAt', direction: 'ASC' }]
     });
 
-    return loanPackages.map((loanPackage) => convertToDto(CreateLoanPackageRes, loanPackage));
+    const items = loanPackages.map((loanPackage) => convertToDto(CreateLoanPackageRes, loanPackage));
+    return new PagingResponseDto<CreateLoanPackageRes>(totalItems, items);
   }
 
   async getDetail(id: string): Promise<CreateLoanPackageRes> {
