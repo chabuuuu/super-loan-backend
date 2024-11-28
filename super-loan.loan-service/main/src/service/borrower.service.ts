@@ -35,6 +35,9 @@ import { INotificationService } from '@/service/interface/i.notification.service
 import { Notification } from '@/models/notification.model';
 import { NotificationType } from '@/enums/notification-type.enum';
 import { IBorrowerProfileRepository } from '@/repository/interface/i.borrower_profile.repository';
+import { PagingResponseDto } from '@/dto/paging-response.dto';
+import { PagingDto } from '@/dto/paging.dto';
+import { GetAllBorrowerRes } from '@/dto/borrower/get-all-borrower.res';
 const SECRET_KEY: any = process.env.SECRET_KEY;
 
 @injectable()
@@ -57,23 +60,41 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     this.notificationService = notificationService;
     this.borrowerProfileRepository = borrowerProfileRepository;
   }
-  // private async verifyCaptcha(captchaToken: string): Promise<boolean> {
-  //   const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-  //   const url = `https://www.google.com/recaptcha/api/siteverify`;
-  //   //if(!DataTransfer.isClickcaptcha) throw
-  //   try {
-  //     const response = await axios.post(url, null, {
-  //       params: {
-  //         secret: secretKey,
-  //         response: captchaToken
-  //       }
-  //     });
-  //     return response.data.success; // Kiểm tra nếu success là true
-  //   } catch (error) {
-  //     console.error('Error verifying CAPTCHA:', error);
-  //     return false;
-  //   }
-  // }
+
+  async getAll(paging: PagingDto): Promise<PagingResponseDto<GetAllBorrowerRes>> {
+    const borrowers = await this.borrowerRepository.findMany({
+      relations: ['contracts'],
+      paging: paging,
+      select: {
+        borrowerId: true,
+        email: true,
+        phoneNumber: true,
+        status: true,
+        borrowerProfile: {
+          income: true
+        },
+        createAt: true
+      }
+    });
+
+    const result = new Array<GetAllBorrowerRes>();
+
+    //Gắn số lượng hợp đồng
+    for (const borrower of borrowers) {
+      const contracts = await borrower.contracts;
+      (borrower as unknown as any).numberOfContracts = contracts.length;
+
+      result.push(convertToDto(GetAllBorrowerRes, borrower));
+    }
+
+    const total = await this.borrowerRepository.count({ filter: {} });
+
+    return {
+      items: result,
+      total
+    };
+  }
+
   async register(data: RegisterBorrowerReq): Promise<RegisterBorrowerRes> {
     const hashedPassword = await bcrypt.hash(data.password, 10);
     data.password = hashedPassword;

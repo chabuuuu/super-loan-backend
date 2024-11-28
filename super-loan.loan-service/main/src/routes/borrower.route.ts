@@ -25,6 +25,8 @@ borrowerRouter
 
   .get('/get-profile', authenticateJWT, borrowerController.getProfile.bind(borrowerController))
 
-  .put('/update-profile', authenticateJWT, borrowerController.updateProfile.bind(borrowerController));
+  .put('/update-profile', authenticateJWT, borrowerController.updateProfile.bind(borrowerController))
+
+  .get('/', authenticateJWT, borrowerController.getAll.bind(borrowerController));
 
 export default borrowerRouter;
