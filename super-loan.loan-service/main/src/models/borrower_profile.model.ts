@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToMany, Index, OneToOne, PrimaryColumn } from 'typeorm';
 import { Borrower } from './borrower.model';
 import { BaseModel } from './base.model';
+import { DebtStatus } from '@/enums/debt-status.enum';
 
 export enum IdentifyCardIssuedPlace {
   RESIDENCE_REGISTRY = 'RESIDENCE_REGISTRY',
@@ -78,4 +79,7 @@ export class BorrowerProfile extends BaseModel {
 
   @Column('varchar', { length: 255, nullable: true, name: 'sign_attachments' })
   signAttachments!: string[];
+
+  @Column({ name: 'debt_status', type: 'enum', enum: DebtStatus, default: DebtStatus.GOOD })
+  debtStatus!: DebtStatus;
 }

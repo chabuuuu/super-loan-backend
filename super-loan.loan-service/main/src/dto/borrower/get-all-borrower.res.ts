@@ -1,4 +1,12 @@
-import { Expose } from 'class-transformer';
+import { DebtStatus } from '@/enums/debt-status.enum';
+import { Expose, Type } from 'class-transformer';
+
+class BorrowerProfile {
+  @Expose()
+  income!: number;
+  @Expose()
+  debtStatus!: DebtStatus;
+}
 
 export class GetAllBorrowerRes {
   @Expose()
@@ -8,9 +16,12 @@ export class GetAllBorrowerRes {
   @Expose()
   phoneNumber!: string;
   @Expose()
-  status!: string;
-  @Expose()
   numberOfContracts!: number;
+
+  @Expose()
+  @Type(() => BorrowerProfile)
+  borrowerProfile!: BorrowerProfile;
+
   @Expose()
   createAt!: Date;
 }
