@@ -17,6 +17,7 @@ import { PagingResponseDto } from '@/dto/paging-response.dto';
 import { GetAllBorrowerRes } from '@/dto/borrower/get-all-borrower.res';
 
 export interface IBorrowerService<T extends BaseModelType> extends IBaseCrudService<T> {
+  logout(userId: string): Promise<void>;
   getAll(paging: PagingDto): Promise<PagingResponseDto<GetAllBorrowerRes>>;
   login(requestBody: LoginBorrowerReq, clientInfo: ClientInfoDto): Promise<LoginBorrowerRes>;
   register(data: RegisterBorrowerReq): Promise<RegisterBorrowerRes>;
