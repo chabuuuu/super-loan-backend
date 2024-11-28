@@ -11,6 +11,8 @@ const borrowerRouter = express.Router();
 borrowerRouter
   .post('/register', classValidate(RegisterBorrowerReq), borrowerController.register.bind(borrowerController))
 
+  .post('/logout', authenticateJWT, borrowerController.logout.bind(borrowerController))
+
   .post('/login', classValidate(LoginBorrowerReq), borrowerController.login.bind(borrowerController))
 
   .post(

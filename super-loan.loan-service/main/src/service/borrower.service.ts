@@ -38,14 +38,20 @@ import { IBorrowerProfileRepository } from '@/repository/interface/i.borrower_pr
 import { PagingResponseDto } from '@/dto/paging-response.dto';
 import { PagingDto } from '@/dto/paging.dto';
 import { GetAllBorrowerRes } from '@/dto/borrower/get-all-borrower.res';
+import { RedisSchemaEnum } from '@/enums/redis-schema.enum';
+import moment from 'moment';
 const SECRET_KEY: any = process.env.SECRET_KEY;
 
 @injectable()
 export class BorrowerService extends BaseCrudService<Borrower> implements IBorrowerService<Borrower> {
+  //Inject
   private borrowerRepository: IBorrowerRepository<Borrower>;
   private permissionSpecificRepository: IPermissionSpecificRepository<PermissionSpecific>;
   private notificationService: INotificationService<Notification>;
   private borrowerProfileRepository: IBorrowerProfileRepository<BorrowerProfile>;
+
+  //Constant
+  private LOGIN_TOKEN_EXPIRE = 4 * 60 * 60;
 
   constructor(
     @inject('BorrowerRepository') borrowerRepository: IBorrowerRepository<Borrower>,
@@ -59,6 +65,23 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     this.permissionSpecificRepository = permissionSpecificRepository;
     this.notificationService = notificationService;
     this.borrowerProfileRepository = borrowerProfileRepository;
+  }
+
+  /**
+   * * Logout Borrower
+   * @param userId
+   */
+  async logout(userId: string): Promise<void> {
+    /*
+    Set token logout time => check token logout time when authenticate
+    And if token logout time >= token iat => not allow access
+    Also set expire time for this key to make sure that the token will be deleted after a period of time = token expire time
+    */
+    const currentTimeStamp = moment().unix();
+
+    await redis.set(`${RedisSchemaEnum.logoutTokenTime}:${userId}`, currentTimeStamp, 'EX', this.LOGIN_TOKEN_EXPIRE);
+
+    return;
   }
 
   async getAll(paging: PagingDto): Promise<PagingResponseDto<GetAllBorrowerRes>> {
@@ -191,7 +214,7 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     const claim = new JwtClaimDto(borrower.borrowerId, '', permissionIds, RoleTypeEnum.BORROWER);
 
     const token = jwt.sign(_.toPlainObject(claim), SECRET_KEY, {
-      expiresIn: 4 * 60 * 60
+      expiresIn: this.LOGIN_TOKEN_EXPIRE
     });
 
     const result = convertToDto(LoginBorrowerRes, borrower);
@@ -265,6 +288,10 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     const response = new ResetPasswordRes();
     response.borrowerId = borrower.borrowerId;
     response.message = 'Password has been reset successfully.';
+
+    //Logout after reset password
+    await this.logout(borrower.borrowerId);
+
     return response;
   }
 
