@@ -36,8 +36,7 @@ export class LoanPackageController {
       const rpp = Number(req.query.rpp) || 10;
 
       const loanPackages = await this.loanPackageService.getAll(page, rpp);
-
-      res.json({ message: 'Success', data: loanPackages });
+      res.send_ok('Success', loanPackages);
     } catch (error) {
       next(error);
     }
