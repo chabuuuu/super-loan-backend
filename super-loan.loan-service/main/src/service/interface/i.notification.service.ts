@@ -1,4 +1,5 @@
 import { ClientInfoDto } from '@/dto/client-info.dto';
+import { SeenNotificationReq } from '@/dto/notification/seen-notification.req';
 import { UserTypeEnum } from '@/enums/user-type.enum';
 import { Borrower } from '@/models/borrower.model';
 import { IBaseCrudService } from '@/service/interface/i.base.service';
@@ -6,6 +7,8 @@ import { BaseModelType } from '@/types/base-model.types';
 import { ParsedQs } from 'qs';
 
 export interface INotificationService<T extends BaseModelType> extends IBaseCrudService<T> {
+  seenNotification(userId: string, roleId: string, seenNotificationReq: SeenNotificationReq): Promise<void>;
+
   getMyNotification(id: string, roleId: string, seen: string): Promise<T[]>;
 
   sendNotification(

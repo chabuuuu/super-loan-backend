@@ -1,4 +1,5 @@
 import { ClientInfoDto } from '@/dto/client-info.dto';
+import { SeenNotificationReq } from '@/dto/notification/seen-notification.req';
 import { NotificationType } from '@/enums/notification-type.enum';
 import { RoleTypeEnum } from '@/enums/role-type.enum';
 import { UserTypeEnum } from '@/enums/user-type.enum';
@@ -23,6 +24,68 @@ export class NotificationService extends BaseCrudService<Notification> implement
     super(notificationRepository);
     this.notificationRepository = notificationRepository;
     this.employeeRepository = employeeRepository;
+  }
+
+  /**
+   * User seen notification by notificationId or all notification if seenAll = true
+   *
+   * @param id
+   * @param seenNotificationReq
+   */
+  async seenNotification(userId: string, roleId: string, seenNotificationReq: SeenNotificationReq): Promise<void> {
+    //If seenAll is true, set all notification of user to seen
+    if (seenNotificationReq.seenAll == true) {
+      //Find all notification of user that have seen = false
+      const notifications = await this.notificationRepository.findByReceiverIdAndReceiverTypeAndSeen(
+        userId,
+        roleId,
+        false
+      );
+
+      //Set seen = true for all notification
+      for (const notification of notifications) {
+        if (notification.receivers) {
+          for (const receiver of notification.receivers) {
+            if (receiver.receiverId === userId) {
+              receiver.seen = true;
+            }
+          }
+
+          //Save notification
+          await this.notificationRepository.save({ data: notification });
+        }
+      }
+
+      return;
+    }
+
+    //If seenAll is false, set seen = true for notification that have notificationId in notificationIds
+    for (const notificationId of seenNotificationReq.notificationIds) {
+      //Find notification by notificationId
+      const notification = await this.notificationRepository.findOne({
+        filter: {
+          notificationId: notificationId
+        }
+      });
+
+      //If notification not found, continue to next notification
+      if (!notification) {
+        continue;
+      }
+
+      //If notification found, set seen = true for user
+      if (notification.receivers) {
+        for (const receiver of notification.receivers) {
+          if (receiver.receiverId === userId) {
+            receiver.seen = true;
+          }
+        }
+
+        //Save notification
+        await this.notificationRepository.save({ data: notification });
+      }
+    }
+    return;
   }
 
   async getMyNotification(id: string, roleId: string, seen: string): Promise<Notification[]> {

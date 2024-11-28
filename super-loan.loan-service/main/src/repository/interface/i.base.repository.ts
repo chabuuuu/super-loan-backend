@@ -13,6 +13,13 @@ export interface IBaseRepository<T> {
   create(payload: { data: DeepPartial<T> }): Promise<T>;
 
   /**
+   * Save a  record with the given data
+   * @param data
+   * @returns The created record
+   */
+  save(payload: { data: DeepPartial<T> }): Promise<T>;
+
+  /**
    * Find a record by the given filter and delete it
    * @param filter
    * @returns The deleted record
