@@ -1,4 +1,5 @@
 import { IBaseCrudController } from '@/controller/interfaces/i.base-curd.controller';
+import { SeenNotificationReq } from '@/dto/notification/seen-notification.req';
 import { ErrorCode } from '@/enums/error-code.enums';
 import { Notification } from '@/models/notification.model';
 import { INotificationService } from '@/service/interface/i.notification.service';
@@ -40,6 +41,23 @@ export class NotificationController {
       const result = await this.notificationService.getMyNotification(user.id, user.roleId, seen);
 
       res.send_ok('Get my notification successful', result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * * POST /seen
+   */
+  async seenNotification(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user = req.user;
+
+      const seenNotificationReq: SeenNotificationReq = req.body;
+
+      await this.notificationService.seenNotification(user!.id, user!.roleId, seenNotificationReq);
+
+      res.send_ok('Seen notifications successful');
     } catch (error) {
       next(error);
     }

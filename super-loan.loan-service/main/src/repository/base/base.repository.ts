@@ -19,6 +19,12 @@ export class BaseRepository<T extends ObjectLiteral> implements IBaseRepository<
     this.ormRepository = ormRepository;
   }
 
+  async save(payload: { data: DeepPartial<T> }): Promise<T> {
+    const data = payload.data;
+    const result = await this.ormRepository.save(data);
+    return result;
+  }
+
   async create(payload: { data: DeepPartial<T> }): Promise<T> {
     const data = payload.data;
     const result = await this.ormRepository.save(data);
