@@ -63,19 +63,21 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
 
   async getAll(paging: PagingDto): Promise<PagingResponseDto<GetAllBorrowerRes>> {
     const borrowers = await this.borrowerRepository.findMany({
-      relations: ['contracts'],
+      relations: ['contracts', 'borrowerProfile'],
       paging: paging,
       select: {
         borrowerId: true,
         email: true,
         phoneNumber: true,
-        status: true,
         borrowerProfile: {
-          income: true
+          income: true,
+          debtStatus: true
         },
         createAt: true
       }
     });
+
+    console.log(borrowers);
 
     const result = new Array<GetAllBorrowerRes>();
 
@@ -149,6 +151,7 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
 
     return convertToDto(RegisterBorrowerRes, result);
   }
+
   async login(data: LoginBorrowerReq, clientInfo: ClientInfoDto): Promise<LoginBorrowerRes> {
     // const isCaptchaValid = await this.verifyCaptcha(data.captchaToken);
     // if (!isCaptchaValid) {
