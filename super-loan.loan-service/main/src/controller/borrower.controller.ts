@@ -55,6 +55,26 @@ export class BorrowerController {
       next(error);
     }
   }
+
+  /**
+   * * POST /logout
+   * @param req
+   * @param res
+   * @param next
+   */
+  async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user = req.user;
+
+      const userId = user!.id;
+
+      await this.borrowerService.logout(userId);
+
+      res.send_ok('Logout success');
+    } catch (error) {
+      next(error);
+    }
+  }
   async forgotPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const requestBody: ForgotPasswordReq = req.body;

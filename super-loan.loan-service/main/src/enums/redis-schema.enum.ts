@@ -6,5 +6,6 @@ export enum RedisSchemaEnum {
   forgetPassword = 'forgetPassword',
   activeEmail = 'activeEmail',
   banksData = 'banksData',
-  tinhThanhVietnamData = 'tinhThanhVietnamData'
+  tinhThanhVietnamData = 'tinhThanhVietnamData',
+  logoutTokenTime = 'logoutTokenTime'
 }
