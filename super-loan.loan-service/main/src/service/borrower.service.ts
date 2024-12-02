@@ -40,6 +40,7 @@ import { PagingDto } from '@/dto/paging.dto';
 import { GetAllBorrowerRes } from '@/dto/borrower/get-all-borrower.res';
 import { RedisSchemaEnum } from '@/enums/redis-schema.enum';
 import moment from 'moment';
+import { employeeRepostitory } from '@/container/employee.container';
 const SECRET_KEY: any = process.env.SECRET_KEY;
 
 @injectable()
@@ -169,8 +170,14 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
       text: emailContent
     });
 
+    const admins = await employeeRepostitory.findMany({
+      filter: {
+        roleId: RoleTypeEnum.ADMIN
+      }
+    });
+
     //Send notification register success
-    this.notificationService.sendWhenRegisterBorrowerSuccess(data.fullname);
+    this.notificationService.sendWhenRegisterBorrowerSuccess(data.fullname, admins);
 
     return convertToDto(RegisterBorrowerRes, result);
   }

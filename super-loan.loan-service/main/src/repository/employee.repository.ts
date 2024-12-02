@@ -4,10 +4,19 @@ import { IEmployeeRepository } from '@/repository/interface/i.employee.repositor
 import { ITYPES } from '@/types/interface.types';
 import { inject } from 'inversify';
 import 'reflect-metadata';
-import { DataSource } from 'typeorm';
+import { DataSource, MoreThanOrEqual } from 'typeorm';
 
 export class EmployeeRepository extends BaseRepository<Employee> implements IEmployeeRepository<Employee> {
   constructor(@inject(ITYPES.Datasource) dataSource: DataSource) {
     super(dataSource.getRepository(Employee));
+  }
+
+  async totalNewEmployee(): Promise<number> {
+    //Total employee that have been created from 3 days ago
+    return await this.ormRepository.count({
+      where: {
+        createAt: MoreThanOrEqual(new Date(new Date().setDate(new Date().getDate() - 3)))
+      }
+    });
   }
 }

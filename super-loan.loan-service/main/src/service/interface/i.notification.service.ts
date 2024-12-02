@@ -2,6 +2,7 @@ import { ClientInfoDto } from '@/dto/client-info.dto';
 import { SeenNotificationReq } from '@/dto/notification/seen-notification.req';
 import { UserTypeEnum } from '@/enums/user-type.enum';
 import { Borrower } from '@/models/borrower.model';
+import { Employee } from '@/models/employee.model';
 import { IBaseCrudService } from '@/service/interface/i.base.service';
 import { BaseModelType } from '@/types/base-model.types';
 import { ParsedQs } from 'qs';
@@ -30,8 +31,7 @@ export interface INotificationService<T extends BaseModelType> extends IBaseCrud
    * * Send when borrower register success
    * @param borrowerName
    */
-  sendWhenRegisterBorrowerSuccess(borrowerName: string): Promise<void>;
-
+  sendWhenRegisterBorrowerSuccess(borrowerName: string, admins: Employee[]): Promise<void>;
   /**
    * * Send when change password success
    * @param userType
