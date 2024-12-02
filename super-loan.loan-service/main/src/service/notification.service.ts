@@ -15,15 +15,10 @@ import { id, inject, injectable } from 'inversify';
 @injectable()
 export class NotificationService extends BaseCrudService<Notification> implements INotificationService<Notification> {
   private notificationRepository: INotificationRepository<Notification>;
-  private employeeRepository: IEmployeeRepository<Employee>;
 
-  constructor(
-    @inject('NotificationRepository') notificationRepository: INotificationRepository<Notification>,
-    @inject('EmployeeRepository') employeeRepository: IEmployeeRepository<Employee>
-  ) {
+  constructor(@inject('NotificationRepository') notificationRepository: INotificationRepository<Notification>) {
     super(notificationRepository);
     this.notificationRepository = notificationRepository;
-    this.employeeRepository = employeeRepository;
   }
 
   /**
@@ -106,14 +101,8 @@ export class NotificationService extends BaseCrudService<Notification> implement
     }
   }
 
-  async sendWhenRegisterBorrowerSuccess(borrowerName: string): Promise<void> {
+  async sendWhenRegisterBorrowerSuccess(borrowerName: string, admins: Employee[]): Promise<void> {
     const notifcationContent = `Khách hàng ${borrowerName}`;
-
-    const admins = await this.employeeRepository.findMany({
-      filter: {
-        roleId: RoleTypeEnum.ADMIN
-      }
-    });
 
     const receivers = admins.map((admin) => ({
       id: admin.employeeId,
