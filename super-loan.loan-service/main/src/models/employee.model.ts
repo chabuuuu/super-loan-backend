@@ -29,7 +29,7 @@ export class Employee extends BaseModel {
   @JoinColumn({ name: 'role_id' })
   role!: Role;
 
-  @OneToOne(() => EmployeeProfile, (employee_profile) => employee_profile.employeeId)
+  @OneToOne(() => EmployeeProfile, (employee_profile) => employee_profile.employee, { cascade: true })
   employeeProfile!: EmployeeProfile;
 
   @OneToMany(() => Appraisal, (appraisal) => appraisal.appraisalStaff)

@@ -103,7 +103,8 @@ export class EmployeeService extends BaseCrudService<Employee> implements IEmplo
     const employees = await this.employeeRepository.findMany({
       filter: where,
       order: order,
-      paging: paging
+      paging: paging,
+      relations: ['employeeProfile']
     });
 
     const total = await this.employeeRepository.count({
