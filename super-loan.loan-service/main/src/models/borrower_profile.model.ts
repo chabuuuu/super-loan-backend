@@ -80,6 +80,6 @@ export class BorrowerProfile extends BaseModel {
   @Column('varchar', { length: 255, nullable: true, name: 'sign_attachments' })
   signAttachments!: string[];
 
-  @Column({ name: 'debt_status', type: 'enum', enum: DebtStatus, default: DebtStatus.GOOD })
+  @Column({ name: 'debt_status', default: DebtStatus.GOOD, type: 'varchar', length: 50 })
   debtStatus!: DebtStatus;
 }

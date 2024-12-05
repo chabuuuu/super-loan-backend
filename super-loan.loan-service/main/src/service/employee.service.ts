@@ -25,6 +25,8 @@ import _ from 'lodash';
 import { convertToDto } from '@/utils/dto-convert/convert-to-dto.util';
 import { INotificationService } from '@/service/interface/i.notification.service';
 import { Notification } from '@/models/notification.model';
+import { CreateEmployeeReq } from '@/dto/employee/create-employee.req';
+import { EmployeeProfile } from '@/models/employee_profile.model';
 
 const SECRET_KEY: any = process.env.SECRET_KEY;
 
@@ -48,6 +50,59 @@ export class EmployeeService extends BaseCrudService<Employee> implements IEmplo
     this.employeeRepository = employeeRepository;
     this.permissionSpecificRepository = permissionSpecificRepository;
     this.notificationService = notificationService;
+  }
+
+  async updateEmployee(id: string, data: any): Promise<void> {
+    const existingEmployee = await this.employeeRepository.findOne({
+      filter: {
+        employeeId: id
+      }
+    });
+
+    if (!existingEmployee) {
+      throw new BaseError(ErrorCode.NF_01, 'Employee not found');
+    }
+
+    //Merge data to employee
+    const employeeUpdate = await this.convertCreateEmployeeReqToEmployee(data);
+    const updatedData: Employee = { ...existingEmployee, ...employeeUpdate }; // Gộp dữ liệu cũ với dữ liệu mới
+
+    await this.employeeRepository.save({
+      data: updatedData
+    });
+  }
+
+  async convertCreateEmployeeReqToEmployee(data: CreateEmployeeReq): Promise<Employee> {
+    const employee = new Employee();
+    employee.email = data.email;
+    employee.phoneNumber = data.phoneNumber;
+    employee.password = await bcrypt.hash(data.password, 10);
+    employee.roleId = data.roleId;
+    employee.status = EmployeeStatus.ACTIVE;
+
+    const employeeProfile = new EmployeeProfile();
+    employeeProfile.fullname = data.fullname;
+    if (data.avatar) {
+      employeeProfile.avatar = data.avatar;
+    }
+    employeeProfile.emails = [data.email];
+    employeeProfile.phoneNumbers = [data.phoneNumber];
+    employeeProfile.identifyCardNumber = data.identifyCardNumber;
+    employeeProfile.homeAddress = data.homeAddress;
+    employeeProfile.birthday = data.birthday;
+    employeeProfile.gender = data.gender;
+
+    employee.employeeProfile = employeeProfile;
+
+    return employee;
+  }
+
+  async createNewEmployee(data: CreateEmployeeReq): Promise<void> {
+    const employee = await this.convertCreateEmployeeReqToEmployee(data);
+
+    await this.employeeRepository.save({
+      data: employee
+    });
   }
 
   async login(data: LoginEmployeeReq, clientInfo: ClientInfoDto): Promise<LoginEmployeeRes> {
@@ -100,6 +155,8 @@ export class EmployeeService extends BaseCrudService<Employee> implements IEmplo
   async getEmployeesByRole(roleId: string, searchData: SearchDataDto): Promise<EmployeeGetByRoleRes> {
     const { where, order, paging } = SearchUtil.getWhereCondition(searchData);
 
+    where.roleId = roleId;
+
     const employees = await this.employeeRepository.findMany({
       filter: where,
       order: order,
@@ -107,9 +164,16 @@ export class EmployeeService extends BaseCrudService<Employee> implements IEmplo
       relations: ['employeeProfile']
     });
 
+    //Remove password field
+    employees.forEach((employee) => {
+      delete (employee as any).password;
+    });
+
     const total = await this.employeeRepository.count({
       filter: where
     });
+
+    const totalEmployee = await this.employeeRepository.count({});
 
     const totalBlockedEmployee = await this.employeeRepository.count({
       filter: {
@@ -124,7 +188,7 @@ export class EmployeeService extends BaseCrudService<Employee> implements IEmplo
       total: total,
       items: employees,
       counts: {
-        totalEmployee: total,
+        totalEmployee: totalEmployee,
         totalBlockedEmployee: totalBlockedEmployee,
         totalNewEmployee: totalNewEmployee
       }

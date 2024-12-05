@@ -11,8 +11,8 @@ export class EmployeeProfile extends BaseModel {
   @JoinColumn({ name: 'employee_id' })
   employee!: Employee;
 
-  @Column({ type: 'text' })
-  avatar!: string;
+  @Column({ type: 'text', nullable: true })
+  avatar?: string;
 
   @Column('simple-array')
   emails!: string[];
@@ -35,9 +35,9 @@ export class EmployeeProfile extends BaseModel {
   @Column('varchar', { length: 10 })
   gender!: string;
 
-  @Column('varchar', { length: 255, name: 'social_link' })
-  socialLink!: string;
+  @Column('varchar', { length: 255, name: 'social_link', nullable: true })
+  socialLink?: string;
 
-  @Column('simple-array', { name: 'sign_attachments' })
-  signAttachments!: string[];
+  @Column('simple-array', { name: 'sign_attachments', nullable: true })
+  signAttachments?: string[];
 }
