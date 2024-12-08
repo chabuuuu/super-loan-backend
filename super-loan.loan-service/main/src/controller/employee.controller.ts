@@ -89,6 +89,19 @@ export class EmployeeController {
   }
 
   /**
+   * * GET /api/employees/search
+   */
+  async searchEmployee(req: Request, res: Response, next: NextFunction) {
+    try {
+      const searchData: SearchDataDto = getSearchData(req);
+      const result = await this.employeeService.search(searchData);
+      res.send_ok('Employees fetched successfully', result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * * POST /api/employees/login
    */
   async login(req: Request, res: Response, next: NextFunction) {

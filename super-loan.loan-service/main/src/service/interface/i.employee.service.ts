@@ -10,6 +10,7 @@ import { IBaseCrudService } from '@/service/interface/i.base.service';
 import { BaseModelType } from '@/types/base-model.types';
 
 export interface IEmployeeService<T extends BaseModelType> extends IBaseCrudService<T> {
+  search(searchData: SearchDataDto): Promise<Employee[]>;
   updateEmployee(id: string, data: any): Promise<void>;
   createNewEmployee(data: CreateEmployeeReq): Promise<void>;
   getEmployeesByRole(roleId: string, searchData: SearchDataDto): Promise<EmployeeGetByRoleRes>;
