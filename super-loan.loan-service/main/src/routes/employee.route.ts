@@ -21,6 +21,8 @@ employeeRouter
 
   .get('/by-role/:roleId', employeeController.getEmployeesByRole.bind(employeeController))
 
+  .get('/search', employeeController.searchEmployee.bind(employeeController))
+
   .get('/:id', employeeController.getDetail.bind(employeeController));
 
 export default employeeRouter;

@@ -52,6 +52,24 @@ export class EmployeeService extends BaseCrudService<Employee> implements IEmplo
     this.notificationService = notificationService;
   }
 
+  async search(searchData: SearchDataDto): Promise<Employee[]> {
+    const { where, order, paging } = SearchUtil.getWhereCondition(searchData);
+
+    const employees = await this.employeeRepository.findMany({
+      filter: where,
+      order: order,
+      paging: paging,
+      relations: ['employeeProfile']
+    });
+
+    //Remove password field
+    employees.forEach((employee) => {
+      delete (employee as any).password;
+    });
+
+    return employees;
+  }
+
   async updateEmployee(id: string, data: any): Promise<void> {
     const existingEmployee = await this.employeeRepository.findOne({
       filter: {

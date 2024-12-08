@@ -10,19 +10,26 @@ export const classValidate = (Dto: any) => async (req: any, res: any, next: any)
       validationError: { target: false, value: false }
     });
 
-    console.log('validateErrors', validateErrors);
-
     if (validateErrors.length > 0) {
       // const formatError = validateErrors.map((error: any) => Object.values(error.constraints).join(', '));
 
-      const formatError = new Array<string>();
+      const formatError = new Map<string, string[]>();
+
       validateErrors.forEach((error: any) => {
-        Object.values(error.constraints).forEach((constraint: any) => {
-          formatError.push(constraint);
-        });
+        if (formatError.has(error.property)) {
+          const a: any = formatError.get(error.property);
+
+          formatError.set(error.property, [...a!, ...Object.values(error.constraints)]);
+        } else {
+          formatError.set(error.property, Object.values(error.constraints));
+        }
       });
 
-      throw new BaseError(ErrorCode.VALIDATION_ERROR, 'Your request body is not valid', formatError);
+      throw new BaseError(
+        ErrorCode.VALIDATION_ERROR,
+        'Your request body is not valid',
+        Object.fromEntries(formatError)
+      );
     }
     next();
   } catch (error) {
