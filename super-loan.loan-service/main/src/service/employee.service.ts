@@ -27,6 +27,8 @@ import { INotificationService } from '@/service/interface/i.notification.service
 import { Notification } from '@/models/notification.model';
 import { CreateEmployeeReq } from '@/dto/employee/create-employee.req';
 import { EmployeeProfile } from '@/models/employee_profile.model';
+import { IRolePermissionRepository } from '@/repository/interface/i.role_permission.repository';
+import { RolePermission } from '@/models/role_permission.model';
 
 const SECRET_KEY: any = process.env.SECRET_KEY;
 
@@ -35,6 +37,7 @@ export class EmployeeService extends BaseCrudService<Employee> implements IEmplo
   private employeeRepository: IEmployeeRepository<Employee>;
   private permissionSpecificRepository: IPermissionSpecificRepository<PermissionSpecific>;
   private notificationService: INotificationService<Notification>;
+  private rolePermissionRepository: IRolePermissionRepository<RolePermission>;
 
   //Constant
   private LOGIN_TOKEN_EXPIRE = 4 * 60 * 60;
@@ -44,12 +47,14 @@ export class EmployeeService extends BaseCrudService<Employee> implements IEmplo
     notificationService: INotificationService<Notification>,
     @inject('EmployeeRepository') employeeRepository: IEmployeeRepository<Employee>,
     @inject('PermissionSpecificRepository')
-    permissionSpecificRepository: IPermissionSpecificRepository<PermissionSpecific>
+    permissionSpecificRepository: IPermissionSpecificRepository<PermissionSpecific>,
+    @inject('RolePermissionRepository') rolePermissionRepository: IRolePermissionRepository<RolePermission>
   ) {
     super(employeeRepository);
     this.employeeRepository = employeeRepository;
     this.permissionSpecificRepository = permissionSpecificRepository;
     this.notificationService = notificationService;
+    this.rolePermissionRepository = rolePermissionRepository;
   }
 
   async search(searchData: SearchDataDto): Promise<Employee[]> {
@@ -146,14 +151,26 @@ export class EmployeeService extends BaseCrudService<Employee> implements IEmplo
       throw new BaseError(ErrorCode.AUTH_01, 'Password is incorrect');
     }
 
-    const employeePermissions = await this.permissionSpecificRepository.findMany({
+    const rolePermission = await this.rolePermissionRepository.findMany({
+      filter: {
+        roleId: employee.roleId
+      }
+    });
+
+    const employeeSpecificPermissions = await this.permissionSpecificRepository.findMany({
       filter: {
         userId: employee.employeeId,
         userType: UserTypeEnum.EMPLOYEE
       }
     });
 
-    const permissionIds = employeePermissions!.map((permission) => permission.permissionId) || [''];
+    const specificPermissionIds = employeeSpecificPermissions!.map((permission) => permission.permissionId) || [''];
+
+    const rolePermissionIds = rolePermission!.map((permission) => permission.permissionId) || [''];
+
+    //Merge specificPermissionIds and rolePermissionIds
+
+    const permissionIds = _.union(specificPermissionIds, rolePermissionIds);
 
     const claim = new JwtClaimDto(employee.employeeId, '', permissionIds, employee.roleId);
 

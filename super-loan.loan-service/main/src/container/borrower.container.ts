@@ -11,6 +11,8 @@ import { INotificationService } from '@/service/interface/i.notification.service
 import { notificationService } from '@/container/notification.container';
 import { IBorrowerProfileRepository } from '@/repository/interface/i.borrower_profile.repository';
 import { borrowerProfileRepository } from '@/container/borrower_profile.container';
+import { IRolePermissionRepository } from '@/repository/interface/i.role_permission.repository';
+import { rolePermissionRepository } from '@/container/role_permission.container';
 
 class BorrowerContainer extends BaseContainer {
   constructor() {
@@ -28,6 +30,9 @@ class BorrowerContainer extends BaseContainer {
     this.container
       .bind<IBorrowerProfileRepository<any>>('BorrowerProfileRepository')
       .toConstantValue(borrowerProfileRepository);
+    this.container
+      .bind<IRolePermissionRepository<any>>('RolePermissionRepository')
+      .toConstantValue(rolePermissionRepository);
   }
 
   export() {

@@ -10,6 +10,8 @@ import { permissionSpecificRepository } from '@/container/permission_specific.co
 import { INotificationRepository } from '@/repository/interface/i.notification.repository';
 import { notificationService } from '@/container/notification.container';
 import { INotificationService } from '@/service/interface/i.notification.service';
+import { IRolePermissionRepository } from '@/repository/interface/i.role_permission.repository';
+import { rolePermissionRepository } from '@/container/role_permission.container';
 
 class EmployeeContainer extends BaseContainer {
   constructor() {
@@ -23,6 +25,9 @@ class EmployeeContainer extends BaseContainer {
       .bind<IPermissionSpecificRepository<any>>('PermissionSpecificRepository')
       .toConstantValue(permissionSpecificRepository);
     this.container.bind<INotificationService<any>>('NotificationService').toConstantValue(notificationService);
+    this.container
+      .bind<IRolePermissionRepository<any>>('RolePermissionRepository')
+      .toConstantValue(rolePermissionRepository);
   }
 
   export() {
