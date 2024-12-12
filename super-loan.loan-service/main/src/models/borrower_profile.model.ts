@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToMany, Index, O
 import { Borrower } from './borrower.model';
 import { BaseModel } from './base.model';
 import { DebtStatus } from '@/enums/debt-status.enum';
+import { HomeAddressDto } from '@/dto/home-address.dto';
 
 export enum IdentifyCardIssuedPlace {
   RESIDENCE_REGISTRY = 'RESIDENCE_REGISTRY',
@@ -59,8 +60,8 @@ export class BorrowerProfile extends BaseModel {
   @Column('simple-array', { nullable: true, name: 'borrower_income_proof_documents' })
   borrowerIncomeProofDocuments!: string[];
 
-  @Column('varchar', { length: 255, name: 'home_address' })
-  homeAddress!: string;
+  @Column({ type: 'jsonb', name: 'home_address', nullable: true })
+  homeAddress?: HomeAddressDto;
 
   @Column('varchar', { length: 255, nullable: true, name: 'work_address' })
   workAddress!: string;

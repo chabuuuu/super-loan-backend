@@ -19,6 +19,8 @@ employeeRouter
 
   .post('/', classValidate(CreateEmployeeReq), authenticateJWT, employeeController.create.bind(employeeController))
 
+  .get('/get-profile', authenticateJWT, employeeController.getMyProfile.bind(employeeController))
+
   .get('/by-role/:roleId', employeeController.getEmployeesByRole.bind(employeeController))
 
   .get('/search', employeeController.searchEmployee.bind(employeeController))
