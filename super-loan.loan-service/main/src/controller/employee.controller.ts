@@ -114,4 +114,26 @@ export class EmployeeController {
       next(error);
     }
   }
+
+  /**
+   * * GET /api/employees/get-profile
+   */
+  async getMyProfile(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = req.user;
+      const result = await this.employeeService.findOne({
+        filter: {
+          employeeId: user!.id
+        },
+        relations: ['employeeProfile']
+      });
+
+      //Delete sensitive field
+      delete (result as any).password;
+
+      res.send_ok('Profile fetched successfully', result);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

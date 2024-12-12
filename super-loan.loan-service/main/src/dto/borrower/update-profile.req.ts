@@ -1,3 +1,4 @@
+import { HomeAddressDto } from '@/dto/home-address.dto';
 import { IdentifyCardIssuedPlace } from '@/models/borrower_profile.model';
 import { Type } from 'class-transformer';
 import {
@@ -63,8 +64,7 @@ export class UpdateProfileReq {
   borrowerIncomeProofDocuments?: string[];
 
   @IsOptional()
-  @IsString()
-  homeAddress?: string;
+  homeAddress?: HomeAddressDto;
 
   @IsOptional()
   @IsString()
