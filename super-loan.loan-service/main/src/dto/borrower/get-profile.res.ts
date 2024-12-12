@@ -1,3 +1,4 @@
+import { HomeAddressDto } from '@/dto/home-address.dto';
 import { Expose } from 'class-transformer';
 
 export class GetProfileRes {
@@ -38,7 +39,7 @@ export class GetProfileRes {
   borrowerIncomeProofDocuments!: string[];
 
   @Expose()
-  homeAddress!: string;
+  homeAddress?: HomeAddressDto;
 
   @Expose()
   workAddress!: string;

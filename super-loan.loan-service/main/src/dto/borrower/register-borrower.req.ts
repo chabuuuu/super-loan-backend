@@ -1,4 +1,5 @@
 import { ValidateError } from '@/constants/validate.constants';
+import { HomeAddressDto } from '@/dto/home-address.dto';
 import {
   IsNotEmpty,
   IsString,
@@ -36,8 +37,7 @@ export class RegisterBorrowerReq {
   phoneNumber!: string;
 
   @IsNotEmpty()
-  @IsString()
-  homeAddress!: string;
+  homeAddress!: HomeAddressDto;
 
   @IsNotEmpty()
   @IsString()
