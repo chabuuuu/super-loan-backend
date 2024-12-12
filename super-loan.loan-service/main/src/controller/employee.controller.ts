@@ -121,15 +121,24 @@ export class EmployeeController {
   async getMyProfile(req: Request, res: Response, next: NextFunction) {
     try {
       const user = req.user;
-      const result = await this.employeeService.findOne({
+      let result = await this.employeeService.findOne({
         filter: {
           employeeId: user!.id
         },
         relations: ['employeeProfile']
       });
 
+      //Merge employee.employeeProfile to employee
+      if (result?.employeeProfile) {
+        result = {
+          ...result,
+          ...result.employeeProfile
+        };
+      }
+
       //Delete sensitive field
       delete (result as any).password;
+      delete (result as any).employeeProfile;
 
       res.send_ok('Profile fetched successfully', result);
     } catch (error) {
