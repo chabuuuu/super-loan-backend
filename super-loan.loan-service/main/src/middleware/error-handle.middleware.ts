@@ -37,6 +37,9 @@ export const globalErrorHanlder = (error: any, req: Request, res: Response, next
     if (error.code === ErrorCode.BAD_REQUEST) {
       return res.send_badRequest('Bad Request', error);
     }
+    if (error.code === ErrorCode.PERMISSION_01) {
+      return res.send_forbidden('Forbidden', error);
+    }
   }
 
   return res.send_internalServerError(ReasonPhrases.INTERNAL_SERVER_ERROR, error.message);

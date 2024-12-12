@@ -13,7 +13,7 @@ export class MenuService implements IMenuService {
     QUAN_LY_KHACH_HANG_VAY: [Permissions.QUAN_LY_KHACH_HANG_VAY],
     QUAN_LY_KHACH_HANG_CHO_VAY: [Permissions.QUAN_LY_KHACH_HANG_CHO_VAY],
     QUAN_LY_TAI_KHOAN: [Permissions.QUAN_LY_TAI_KHOAN],
-    QUAN_LY_NHAN_VIEN: [Permissions.QUAN_LY_TAI_KHOAN],
+    QUAN_LY_NHAN_VIEN: [Permissions.QUAN_LY_TAI_KHOAN, Permissions.QUAY_LY_NHAN_VIEN],
     KHO_QUY: [Permissions.QUAN_LY_KHO_QUY],
     PHIEU_CHI: [Permissions.LAP_PHIEU_CHI, Permissions.XEM_PHIEU_CHI_DA_LAP, Permissions.QUAN_LY_PHIEU_CHI],
     PHIEU_THU: [Permissions.LAP_PHIEU_THU, Permissions.XEM_PHIEU_THU_DA_LAP, Permissions.QUAN_LY_PHIEU_THU],
