@@ -1,6 +1,7 @@
 import { Column, Entity, Index, JoinColumn, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseModel } from './base.model';
 import { Employee } from './employee.model';
+import { HomeAddressDto } from '@/dto/home-address.dto';
 
 @Entity('employee_profiles')
 export class EmployeeProfile extends BaseModel {
@@ -26,8 +27,8 @@ export class EmployeeProfile extends BaseModel {
   @Column('varchar', { length: 50, name: 'identify_card_number' })
   identifyCardNumber!: string;
 
-  @Column('varchar', { length: 255, name: 'home_address' })
-  homeAddress!: string;
+  @Column({ type: 'jsonb', name: 'home_address', nullable: true })
+  homeAddress?: HomeAddressDto;
 
   @Column('date')
   birthday!: Date;
