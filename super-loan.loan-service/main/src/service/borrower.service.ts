@@ -41,6 +41,8 @@ import { GetAllBorrowerRes } from '@/dto/borrower/get-all-borrower.res';
 import { RedisSchemaEnum } from '@/enums/redis-schema.enum';
 import moment from 'moment';
 import { employeeRepostitory } from '@/container/employee.container';
+import { IRolePermissionRepository } from '@/repository/interface/i.role_permission.repository';
+import { RolePermission } from '@/models/role_permission.model';
 const SECRET_KEY: any = process.env.SECRET_KEY;
 
 @injectable()
@@ -50,12 +52,14 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
   private permissionSpecificRepository: IPermissionSpecificRepository<PermissionSpecific>;
   private notificationService: INotificationService<Notification>;
   private borrowerProfileRepository: IBorrowerProfileRepository<BorrowerProfile>;
+  private rolePermissionRepository: IRolePermissionRepository<RolePermission>;
 
   //Constant
   private LOGIN_TOKEN_EXPIRE = 4 * 60 * 60;
 
   constructor(
     @inject('BorrowerRepository') borrowerRepository: IBorrowerRepository<Borrower>,
+    @inject('RolePermissionRepository') rolePermissionRepository: IRolePermissionRepository<RolePermission>,
     @inject('PermissionSpecificRepository')
     permissionSpecificRepository: IPermissionSpecificRepository<PermissionSpecific>,
     @inject('NotificationService') notificationService: INotificationService<Notification>,
@@ -66,6 +70,7 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     this.permissionSpecificRepository = permissionSpecificRepository;
     this.notificationService = notificationService;
     this.borrowerProfileRepository = borrowerProfileRepository;
+    this.rolePermissionRepository = rolePermissionRepository;
   }
 
   /**
@@ -209,14 +214,26 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
       throw new BaseError(ErrorCode.AUTH_01, 'Password is incorrect');
     }
 
-    const borrowerPermissions = await this.permissionSpecificRepository.findMany({
+    const rolePermission = await this.rolePermissionRepository.findMany({
+      filter: {
+        roleId: RoleTypeEnum.BORROWER
+      }
+    });
+
+    const borrowerSpecificPermissions = await this.permissionSpecificRepository.findMany({
       filter: {
         userId: borrower.borrowerId,
         userType: UserTypeEnum.BORROWER
       }
     });
 
-    const permissionIds = borrowerPermissions!.map((permission) => permission.permissionId) || [''];
+    const specificPermissionIds = borrowerSpecificPermissions!.map((permission) => permission.permissionId) || [''];
+
+    const rolePermissionIds = rolePermission!.map((permission) => permission.permissionId) || [''];
+
+    //Merge specificPermissionIds and rolePermissionIds
+
+    const permissionIds = _.union(specificPermissionIds, rolePermissionIds);
 
     const claim = new JwtClaimDto(borrower.borrowerId, '', permissionIds, RoleTypeEnum.BORROWER);
 
