@@ -1,3 +1,4 @@
+import { HomeAddressDto } from '@/dto/home-address.dto';
 import {
   IsString,
   IsNotEmpty,
@@ -49,8 +50,7 @@ export class CreateEmployeeReq {
   identifyCardNumber!: string;
 
   @IsNotEmpty()
-  @IsString()
-  homeAddress!: string;
+  homeAddress!: HomeAddressDto;
 
   @IsNotEmpty()
   @IsDateString()
