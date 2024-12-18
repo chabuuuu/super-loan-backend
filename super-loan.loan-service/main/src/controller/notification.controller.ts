@@ -1,5 +1,6 @@
 import { IBaseCrudController } from '@/controller/interfaces/i.base-curd.controller';
 import { SeenNotificationReq } from '@/dto/notification/seen-notification.req';
+import { UnSeenNotificationReq } from '@/dto/notification/unseen-notification.req';
 import { ErrorCode } from '@/enums/error-code.enums';
 import { Notification } from '@/models/notification.model';
 import { INotificationService } from '@/service/interface/i.notification.service';
@@ -58,6 +59,23 @@ export class NotificationController {
       await this.notificationService.seenNotification(user!.id, user!.roleId, seenNotificationReq);
 
       res.send_ok('Seen notifications successful');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * * POST /unseen
+   */
+  async unseenNotification(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user = req.user;
+
+      const unseenNotificationReq: UnSeenNotificationReq = req.body;
+
+      await this.notificationService.unSeenNotification(user!.id, user!.roleId, unseenNotificationReq);
+
+      res.send_ok('Unseen notifications successful');
     } catch (error) {
       next(error);
     }

@@ -1,5 +1,6 @@
 import { ClientInfoDto } from '@/dto/client-info.dto';
 import { SeenNotificationReq } from '@/dto/notification/seen-notification.req';
+import { UnSeenNotificationReq } from '@/dto/notification/unseen-notification.req';
 import { NotificationType } from '@/enums/notification-type.enum';
 import { RoleTypeEnum } from '@/enums/role-type.enum';
 import { UserTypeEnum } from '@/enums/user-type.enum';
@@ -21,20 +22,20 @@ export class NotificationService extends BaseCrudService<Notification> implement
     this.notificationRepository = notificationRepository;
   }
 
-  /**
-   * User seen notification by notificationId or all notification if seenAll = true
-   *
-   * @param id
-   * @param seenNotificationReq
-   */
-  async seenNotification(userId: string, roleId: string, seenNotificationReq: SeenNotificationReq): Promise<void> {
+  private async changeNotificationStatus(
+    seenStatus: boolean,
+    all: boolean,
+    notificationIds: string[] | undefined,
+    userId: string,
+    roleId: string
+  ) {
     //If seenAll is true, set all notification of user to seen
-    if (seenNotificationReq.seenAll == true) {
+    if (all == true) {
       //Find all notification of user that have seen = false
       const notifications = await this.notificationRepository.findByReceiverIdAndReceiverTypeAndSeen(
         userId,
         roleId,
-        false
+        !seenStatus
       );
 
       //Set seen = true for all notification
@@ -42,7 +43,7 @@ export class NotificationService extends BaseCrudService<Notification> implement
         if (notification.receivers) {
           for (const receiver of notification.receivers) {
             if (receiver.receiverId === userId) {
-              receiver.seen = true;
+              receiver.seen = seenStatus;
             }
           }
 
@@ -55,11 +56,11 @@ export class NotificationService extends BaseCrudService<Notification> implement
     }
 
     //If seenAll is false, set seen = true for notification that have notificationId in notificationIds
-    if (!seenNotificationReq.notificationIds) {
+    if (!notificationIds) {
       return;
     }
 
-    for (const notificationId of seenNotificationReq.notificationIds) {
+    for (const notificationId of notificationIds) {
       //Find notification by notificationId
       const notification = await this.notificationRepository.findOne({
         filter: {
@@ -76,7 +77,7 @@ export class NotificationService extends BaseCrudService<Notification> implement
       if (notification.receivers) {
         for (const receiver of notification.receivers) {
           if (receiver.receiverId === userId) {
-            receiver.seen = true;
+            receiver.seen = seenStatus;
           }
         }
 
@@ -84,7 +85,38 @@ export class NotificationService extends BaseCrudService<Notification> implement
         await this.notificationRepository.save({ data: notification });
       }
     }
-    return;
+  }
+
+  /**
+   * User unSeen notification by notificationId or all notification if seenAll = true
+   * @param id
+   * @param roleId
+   * @param unseenNotificationReq
+   */
+  async unSeenNotification(id: string, roleId: string, unseenNotificationReq: UnSeenNotificationReq): Promise<void> {
+    await this.changeNotificationStatus(
+      false,
+      unseenNotificationReq.unSeenAll,
+      unseenNotificationReq.notificationIds,
+      id,
+      roleId
+    );
+  }
+
+  /**
+   * User seen notification by notificationId or all notification if seenAll = true
+   *
+   * @param id
+   * @param seenNotificationReq
+   */
+  async seenNotification(userId: string, roleId: string, seenNotificationReq: SeenNotificationReq): Promise<void> {
+    await this.changeNotificationStatus(
+      true,
+      seenNotificationReq.seenAll,
+      seenNotificationReq.notificationIds,
+      userId,
+      roleId
+    );
   }
 
   async getMyNotification(id: string, roleId: string, seen: string): Promise<Notification[]> {
