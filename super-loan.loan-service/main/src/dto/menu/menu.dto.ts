@@ -9,4 +9,6 @@ export class MenuDto {
   isCollapsed!: boolean;
   @Expose()
   children: MenuDto[] | null = null;
+  @Expose()
+  icon: string | null = null;
 }

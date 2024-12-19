@@ -35,6 +35,8 @@ export class NotificationService extends BaseCrudService<Notification> implement
       const notifications = await this.notificationRepository.findByReceiverIdAndReceiverTypeAndSeen(
         userId,
         roleId,
+        undefined,
+        undefined,
         !seenStatus
       );
 
@@ -119,14 +121,20 @@ export class NotificationService extends BaseCrudService<Notification> implement
     );
   }
 
-  async getMyNotification(id: string, roleId: string, seen: string): Promise<Notification[]> {
+  async getMyNotification(
+    id: string,
+    roleId: string,
+    seen: string,
+    page: number,
+    rpp: number
+  ): Promise<Notification[]> {
     switch (seen) {
       case 'true':
-        return this.notificationRepository.findByReceiverIdAndReceiverTypeAndSeen(id, roleId, true);
+        return this.notificationRepository.findByReceiverIdAndReceiverTypeAndSeen(id, roleId, page, rpp, true);
       case 'false':
-        return this.notificationRepository.findByReceiverIdAndReceiverTypeAndSeen(id, roleId, false);
+        return this.notificationRepository.findByReceiverIdAndReceiverTypeAndSeen(id, roleId, page, rpp, false);
       case 'all':
-        return this.notificationRepository.findByReceiverIdAndReceiverTypeAndSeen(id, roleId);
+        return this.notificationRepository.findByReceiverIdAndReceiverTypeAndSeen(id, roleId, page, rpp);
 
       default:
         return [];
