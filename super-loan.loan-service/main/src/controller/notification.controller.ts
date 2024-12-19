@@ -35,11 +35,14 @@ export class NotificationController {
 
       const seen = req.query.seen.toString();
 
+      const page = req.query.page ? parseInt(req.query.page.toString()) : 1;
+      const rpp = req.query.rpp ? parseInt(req.query.rpp.toString()) : 10;
+
       if (!user) {
         throw new BaseError(ErrorCode.AUTH_01, 'User not login');
       }
 
-      const result = await this.notificationService.getMyNotification(user.id, user.roleId, seen);
+      const result = await this.notificationService.getMyNotification(user.id, user.roleId, seen, page, rpp);
 
       res.send_ok('Get my notification successful', result);
     } catch (error) {

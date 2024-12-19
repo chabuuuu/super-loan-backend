@@ -13,7 +13,7 @@ export interface INotificationService<T extends BaseModelType> extends IBaseCrud
 
   seenNotification(userId: string, roleId: string, seenNotificationReq: SeenNotificationReq): Promise<void>;
 
-  getMyNotification(id: string, roleId: string, seen: string): Promise<T[]>;
+  getMyNotification(id: string, roleId: string, seen: string, page: number, rpp: number): Promise<T[]>;
 
   sendNotification(
     type: string,
