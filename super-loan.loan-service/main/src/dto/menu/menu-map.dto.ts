@@ -6,4 +6,5 @@ export class MenuMapDto {
   isCollapsed!: boolean;
   children: MenuMapDto[] | null = null;
   permissions!: string[];
+  icon: string | null = null;
 }

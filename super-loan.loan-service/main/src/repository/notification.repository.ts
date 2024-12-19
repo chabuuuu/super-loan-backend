@@ -17,14 +17,28 @@ export class NotificationRepository
   async findByReceiverIdAndReceiverTypeAndSeen(
     receiverId: string,
     receiverType: string,
+    page?: number,
+    rpp?: number,
     seen?: boolean
   ): Promise<Notification[]> {
-    const notifications = await this.ormRepository
-      .createQueryBuilder('notifications')
-      .where('notifications.receivers @> :receiver', { receiver: JSON.stringify([{ receiverId, receiverType, seen }]) })
-      .orderBy('notifications.create_at', 'DESC')
-      .getMany();
-
-    return notifications;
+    if (page && rpp) {
+      return await this.ormRepository
+        .createQueryBuilder('notifications')
+        .where('notifications.receivers @> :receiver', {
+          receiver: JSON.stringify([{ receiverId, receiverType, seen }])
+        })
+        .orderBy('notifications.create_at', 'DESC')
+        .skip((page - 1) * rpp) // Bỏ qua các bản ghi trước đó
+        .take(rpp) // Lấy số lượng bản ghi theo kích thước trang
+        .getMany();
+    } else {
+      return await this.ormRepository
+        .createQueryBuilder('notifications')
+        .where('notifications.receivers @> :receiver', {
+          receiver: JSON.stringify([{ receiverId, receiverType, seen }])
+        })
+        .orderBy('notifications.create_at', 'DESC')
+        .getMany();
+    }
   }
 }
