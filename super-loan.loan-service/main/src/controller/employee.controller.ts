@@ -145,4 +145,21 @@ export class EmployeeController {
       next(error);
     }
   }
+
+  /**
+   * * DELETE /api/employees/:id
+   */
+  async deleteById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = req.params.id;
+      await this.employeeService.findOneAndDelete({
+        filter: {
+          employeeId: id
+        }
+      });
+      res.send_ok('Employee deleted successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
 }

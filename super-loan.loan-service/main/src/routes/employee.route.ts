@@ -44,6 +44,18 @@ employeeRouter
     employeeController.searchEmployee.bind(employeeController)
   )
 
-  .get('/:id', checkPermission([Permissions.QUAY_LY_NHAN_VIEN]), employeeController.getDetail.bind(employeeController));
+  .get(
+    '/:id',
+    authenticateJWT,
+    checkPermission([Permissions.QUAY_LY_NHAN_VIEN]),
+    employeeController.getDetail.bind(employeeController)
+  )
+
+  .delete(
+    '/:id',
+    authenticateJWT,
+    checkPermission([Permissions.QUAY_LY_NHAN_VIEN]),
+    employeeController.deleteById.bind(employeeController)
+  );
 
 export default employeeRouter;
