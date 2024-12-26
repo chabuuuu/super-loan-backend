@@ -57,7 +57,7 @@ export class EmployeeService extends BaseCrudService<Employee> implements IEmplo
     this.rolePermissionRepository = rolePermissionRepository;
   }
 
-  async search(searchData: SearchDataDto): Promise<Employee[]> {
+  async search(searchData: SearchDataDto): Promise<PagingResponseDto<Employee>> {
     const { where, order, paging } = SearchUtil.getWhereCondition(searchData);
 
     const employees = await this.employeeRepository.findMany({
@@ -72,7 +72,11 @@ export class EmployeeService extends BaseCrudService<Employee> implements IEmplo
       delete (employee as any).password;
     });
 
-    return employees;
+    const total = await this.employeeRepository.count({
+      filter: where
+    });
+
+    return new PagingResponseDto(total, employees);
   }
 
   async updateEmployee(id: string, data: any): Promise<void> {
