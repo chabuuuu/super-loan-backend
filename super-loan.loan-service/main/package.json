@@ -33,6 +33,7 @@
     "@types/geoip-lite": "^1.4.4",
     "@types/i18n": "^0.13.12",
     "@types/lodash": "^4.17.13",
+    "@types/moment": "^2.11.29",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.11.24",
     "@types/nodemailer": "^6.4.16",

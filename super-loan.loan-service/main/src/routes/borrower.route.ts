@@ -11,6 +11,13 @@ import { classValidate } from '@/middleware/class-validate.middleware';
 import express from 'express';
 const borrowerRouter = express.Router();
 borrowerRouter
+  .get(
+    '/search',
+    authenticateJWT,
+    checkPermission([Permissions.QUAN_LY_KHACH_HANG_VAY]),
+    borrowerController.searchBorrower.bind(borrowerController)
+  )
+
   .post('/register', classValidate(RegisterBorrowerReq), borrowerController.register.bind(borrowerController))
 
   .post('/logout', authenticateJWT, borrowerController.logout.bind(borrowerController))
