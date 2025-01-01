@@ -13,6 +13,7 @@ import { VerifyOtpReq } from '@/dto/borrower/verify-otp-borrower.req';
 import { VerifyOtpRes } from '@/dto/borrower/verify-otp-borrower.res';
 import { ClientInfoDto } from '@/dto/client-info.dto';
 import { PagingDto } from '@/dto/paging.dto';
+import { SearchDataDto } from '@/dto/search-data.dto';
 
 import { Borrower } from '@/models/borrower.model';
 import { BorrowerProfile } from '@/models/borrower_profile.model';
@@ -20,6 +21,7 @@ import { IBorrowerService } from '@/service/interface/i.borrower.service';
 import { ITYPES } from '@/types/interface.types';
 import { convertToDto } from '@/utils/dto-convert/convert-to-dto.util';
 import { getClientInfo } from '@/utils/get-client-info.util';
+import { getSearchData } from '@/utils/get-search-data.util';
 import { NextFunction, Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 
@@ -34,6 +36,17 @@ export class BorrowerController {
     this.borrowerService = borrowerService;
     this.common = common;
   }
+
+  async searchBorrower(req: Request, res: Response, next: NextFunction) {
+    try {
+      const searchData: SearchDataDto = getSearchData(req);
+      const result = await this.borrowerService.search(searchData);
+      res.send_ok('Employees fetched successfully', result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const requestBody: RegisterBorrowerReq = req.body;

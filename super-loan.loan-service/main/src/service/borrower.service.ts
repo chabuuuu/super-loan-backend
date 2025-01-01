@@ -43,6 +43,8 @@ import moment from 'moment';
 import { employeeRepostitory } from '@/container/employee.container';
 import { IRolePermissionRepository } from '@/repository/interface/i.role_permission.repository';
 import { RolePermission } from '@/models/role_permission.model';
+import { SearchDataDto } from '@/dto/search-data.dto';
+import { SearchUtil } from '@/utils/search.util';
 const SECRET_KEY: any = process.env.SECRET_KEY;
 
 @injectable()
@@ -88,6 +90,28 @@ export class BorrowerService extends BaseCrudService<Borrower> implements IBorro
     await redis.set(`${RedisSchemaEnum.logoutTokenTime}:${userId}`, currentTimeStamp, 'EX', this.LOGIN_TOKEN_EXPIRE);
 
     return;
+  }
+
+  async search(searchData: SearchDataDto): Promise<PagingResponseDto<Borrower>> {
+    const { where, order, paging } = SearchUtil.getWhereCondition(searchData);
+
+    const borrowers = await this.borrowerRepository.findMany({
+      filter: where,
+      order: order,
+      paging: paging,
+      relations: ['borrowerProfile']
+    });
+
+    //Remove password field
+    borrowers.forEach((borrower) => {
+      delete (borrower as any).password;
+    });
+
+    const total = await this.borrowerRepository.count({
+      filter: where
+    });
+
+    return new PagingResponseDto(total, borrowers);
   }
 
   async getAll(paging: PagingDto): Promise<PagingResponseDto<GetAllBorrowerRes>> {
