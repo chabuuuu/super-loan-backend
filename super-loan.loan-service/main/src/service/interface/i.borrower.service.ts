@@ -15,8 +15,11 @@ import { BaseModelType } from '@/types/base-model.types';
 import { PagingDto } from '@/dto/paging.dto';
 import { PagingResponseDto } from '@/dto/paging-response.dto';
 import { GetAllBorrowerRes } from '@/dto/borrower/get-all-borrower.res';
+import { Borrower } from '@/models/borrower.model';
+import { SearchDataDto } from '@/dto/search-data.dto';
 
 export interface IBorrowerService<T extends BaseModelType> extends IBaseCrudService<T> {
+  search(searchData: SearchDataDto): Promise<PagingResponseDto<Borrower>>;
   logout(userId: string): Promise<void>;
   getAll(paging: PagingDto): Promise<PagingResponseDto<GetAllBorrowerRes>>;
   login(requestBody: LoginBorrowerReq, clientInfo: ClientInfoDto): Promise<LoginBorrowerRes>;

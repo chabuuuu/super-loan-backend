@@ -20,6 +20,7 @@ class RolePermissionContainer extends BaseContainer {
     const rolePermissionController = this.container.get<RolePermissionController>(RolePermissionController);
     const rolePermissionService = this.container.get<IRolePermissionService<any>>('RolePermissionService');
     const rolePermissionRepository = this.container.get<IRolePermissionRepository<any>>('RolePermissionRepository');
+
     return { rolePermissionController, rolePermissionService, rolePermissionRepository };
   }
 }
